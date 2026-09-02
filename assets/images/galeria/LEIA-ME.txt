@@ -1,0 +1,3 @@
+Coloca aqui as fotografias do centro médico (.jpg, .jpeg, .png ou .webp).
+O hero da página inicial e a página de Galeria leem esta pasta automaticamente -
+não precisas de editar nenhum código PHP quando adicionares ou removeres fotos.
