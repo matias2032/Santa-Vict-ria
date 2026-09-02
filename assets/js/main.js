@@ -75,6 +75,30 @@ document.addEventListener('DOMContentLoaded', function () {
         contadores.forEach((elemento) => observador.observe(elemento));
     }
 
+    /* ---------- Aparecer ao rolar (fade + translate) ---------- */
+    const prefereReduzirMovimento = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (!prefereReduzirMovimento) {
+        const seletoresRevelar = '.secao-cabecalho, .cartao-servico, .cartao-destaque, .galeria-item, .info-contacto-item, .formulario, .grelha-2 > div';
+        const elementosRevelar = document.querySelectorAll(seletoresRevelar);
+
+        elementosRevelar.forEach((elemento, indice) => {
+            elemento.classList.add('reveal');
+            elemento.style.transitionDelay = (indice % 6) * 0.08 + 's'; // stagger leve, sem exagerar
+        });
+
+        const observadorRevelar = new IntersectionObserver((entradas) => {
+            entradas.forEach((entrada) => {
+                if (entrada.isIntersecting) {
+                    entrada.target.classList.add('reveal-visivel');
+                    observadorRevelar.unobserve(entrada.target);
+                }
+            });
+        }, { threshold: 0.15 });
+
+        elementosRevelar.forEach((elemento) => observadorRevelar.observe(elemento));
+    }
+
     /* ---------- Menu mobile ---------- */
     const botaoMenu = document.getElementById('menuAlterna');
     const navegacao = document.getElementById('navegacao');

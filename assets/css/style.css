@@ -54,6 +54,10 @@ img { max-width: 100%; display: block; }
 }
 .pular-link:focus { left: 12px; top: 12px; }
 
+/* ---------- Entrada suave do conteúdo de cada página ---------- */
+#conteudo { animation: apareceSuave 0.6s ease both; }
+@keyframes apareceSuave { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+
 /* ---------- Botões ---------- */
 .botao {
     display: inline-flex; align-items: center; justify-content: center;
@@ -64,7 +68,7 @@ img { max-width: 100%; display: block; }
 .botao-primario { background: var(--gradiente-marca); color: var(--branco); box-shadow: var(--sombra); }
 .botao-primario:hover { transform: translateY(-2px); }
 .botao-secundario { border-color: rgba(255,255,255,0.6); color: var(--branco); }
-.botao-secundario:hover { background: rgba(255,255,255,0.12); }
+.botao-secundario:hover { background: rgba(255,255,255,0.12); transform: translateY(-2px); }
 .botao-branco { background: var(--branco); color: var(--azul-profundo); }
 .botao-branco:hover { transform: translateY(-2px); }
 .botao-cabecalho { padding: 11px 22px; font-size: 0.88rem; }
@@ -72,11 +76,13 @@ img { max-width: 100%; display: block; }
 /* ---------- Cabeçalho ---------- */
 .cabecalho { position: sticky; top: 0; z-index: 100; background: rgba(255,255,255,0.92); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(28,42,109,0.08); }
 .cabecalho-interno { width: min(1140px, 92%); margin: 0 auto; display: flex; align-items: center; gap: 28px; padding: 12px 0; }
-.marca { display: flex; align-items: center; }
+.marca { display: flex; align-items: center; transition: transform 0.2s ease; }
+.marca:hover { transform: scale(1.04); }
 .marca-logo { height: 52px; width: auto; }
 
 .navegacao { display: flex; gap: 26px; margin-left: auto; }
-.nav-link { font-weight: 600; font-size: 0.95rem; color: var(--tinta); padding: 6px 2px; position: relative; }
+.nav-link { font-weight: 600; font-size: 0.95rem; color: var(--tinta); padding: 6px 2px; position: relative; transition: transform 0.2s ease, color 0.2s ease; }
+.nav-link:hover { transform: translateY(-2px); }
 .nav-link::after {
     content: ''; position: absolute; left: 0; right: 0; bottom: -4px; height: 2px;
     background: var(--gradiente-marca); transform: scaleX(0); transform-origin: left; transition: transform 0.2s ease;
@@ -98,14 +104,22 @@ img { max-width: 100%; display: block; }
 .hero-sobreposicao { position: absolute; inset: 0; background: var(--gradiente-suave); }
 
 .hero-conteudo { position: relative; z-index: 2; width: min(1140px, 92%); margin: 0 auto; color: var(--branco); max-width: 640px; }
-.hero-eyebrow { color: var(--ciano); font-weight: 700; letter-spacing: 0.03em; margin-bottom: 14px; }
-.hero-titulo { font-size: clamp(2.2rem, 4.2vw, 3.4rem); color: var(--branco); margin-bottom: 18px; }
+
+/* Entrada em sequência: eyebrow -> título -> texto -> botões */
+.hero-eyebrow, .hero-titulo, .hero-texto, .hero-acoes {
+    opacity: 0; transform: translateY(20px); animation: heroAparece 0.8s ease forwards;
+}
+.hero-eyebrow { color: var(--ciano); font-weight: 700; letter-spacing: 0.03em; margin-bottom: 14px; animation-delay: 0.1s; }
+.hero-titulo { font-size: clamp(2.2rem, 4.2vw, 3.4rem); color: var(--branco); margin-bottom: 18px; animation-delay: 0.25s; }
 .hero-titulo span { color: var(--ciano); }
-.hero-texto { color: rgba(255,255,255,0.88); font-size: 1.05rem; max-width: 520px; }
-.hero-acoes { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 8px; }
+.hero-texto { color: rgba(255,255,255,0.88); font-size: 1.05rem; max-width: 520px; animation-delay: 0.4s; }
+.hero-acoes { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 8px; animation-delay: 0.55s; }
+
+@keyframes heroAparece { to { opacity: 1; transform: none; } }
 
 .hero-marcadores { position: absolute; z-index: 2; bottom: 28px; left: 0; right: 0; display: flex; justify-content: center; gap: 10px; }
-.hero-marcador { width: 10px; height: 10px; border-radius: 50%; border: none; background: rgba(255,255,255,0.4); cursor: pointer; padding: 0; }
+.hero-marcador { width: 10px; height: 10px; border-radius: 50%; border: none; background: rgba(255,255,255,0.4); cursor: pointer; padding: 0; transition: transform 0.2s ease, background 0.2s ease; }
+.hero-marcador:hover { transform: scale(1.2); }
 .hero-marcador.ativo { background: var(--ciano); width: 26px; border-radius: 999px; }
 
 /* ---------- Secções gerais ---------- */
@@ -118,17 +132,20 @@ img { max-width: 100%; display: block; }
 .grelha-2 { display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 60px; align-items: center; }
 
 .lista-check { margin: 20px 0 22px; }
-.lista-check li { position: relative; padding-left: 28px; margin-bottom: 10px; color: var(--tinta); font-weight: 500; }
+.lista-check li { position: relative; padding-left: 28px; margin-bottom: 10px; color: var(--tinta); font-weight: 500; transition: transform 0.2s ease, color 0.2s ease; }
+.lista-check li:hover { transform: translateX(6px); color: var(--roxo); }
 .lista-check li::before { content: '✓'; position: absolute; left: 0; color: var(--ciano); font-weight: 800; }
 
-.link-seta { font-weight: 700; color: var(--roxo); }
+.link-seta { font-weight: 700; color: var(--roxo); display: inline-block; transition: transform 0.2s ease, color 0.2s ease; }
 .link-seta::after { content: ' →'; }
+.link-seta:hover { transform: translateX(6px); color: var(--magenta); }
 
 .cartao-destaque {
     background: var(--gradiente-marca); color: var(--branco); border-radius: var(--raio);
-    padding: 40px; box-shadow: var(--sombra);
+    padding: 40px; box-shadow: var(--sombra); transition: transform 0.3s ease;
 }
-.cartao-destaque-numero { font-family: var(--fonte-titulo); font-size: 2.6rem; margin: 0; }
+.cartao-destaque:hover { transform: translateY(-4px); }
+.cartao-destaque-numero { font-family: var(--fonte-titulo); font-size: 2.6rem; margin: 0; color: var(--branco); }
 .cartao-destaque-legenda { color: rgba(255,255,255,0.85); margin-bottom: 0; }
 .cartao-destaque-linha { height: 1px; background: rgba(255,255,255,0.25); margin: 22px 0; }
 
@@ -137,9 +154,9 @@ img { max-width: 100%; display: block; }
 .grelha-servicos { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
 .cartao-servico {
     background: var(--branco); border-radius: var(--raio); padding: 28px;
-    border: 1px solid rgba(28,42,109,0.08); transition: transform 0.2s ease, box-shadow 0.2s ease;
+    border: 1px solid rgba(28,42,109,0.08); transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
-.cartao-servico:hover { transform: translateY(-4px); box-shadow: var(--sombra); }
+.cartao-servico:hover { transform: translateY(-6px) scale(1.015); box-shadow: var(--sombra); }
 .cartao-servico h3 { margin-bottom: 8px; }
 .cartao-servico p { margin-bottom: 10px; font-size: 0.95rem; }
 .cartao-servico-preco { color: var(--magenta); font-weight: 700; margin: 0; }
@@ -157,11 +174,27 @@ img { max-width: 100%; display: block; }
 .rodape-marca p { color: rgba(255,255,255,0.6); }
 .rodape h3 { color: var(--branco); font-size: 1rem; margin-bottom: 16px; }
 .rodape ul li { margin-bottom: 10px; }
-.rodape ul li a { color: rgba(255,255,255,0.7); }
-.rodape ul li a:hover { color: var(--ciano); }
-.rodape-redes { display: flex; gap: 14px; margin-top: 18px; }
-.rodape-redes a { color: rgba(255,255,255,0.7); font-size: 0.85rem; }
+.rodape ul li a { color: rgba(255,255,255,0.7); transition: color 0.2s ease, transform 0.2s ease; display: inline-block; }
+.rodape ul li a:hover { color: var(--ciano); transform: translateX(4px); }
+.rodape-redes { display: flex; gap: 12px; margin-top: 18px; }
+.redes_sociais {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 50px; height: 50px; border-radius: 50%;
+    background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.75);
+    transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+.redes_sociais:hover { color: var(--ciano); background: rgba(255,255,255,0.16); transform: translateY(-3px) rotate(6deg); }
 .rodape-base { border-top: 1px solid rgba(255,255,255,0.1); padding: 20px 0; text-align: center; font-size: 0.85rem; }
+
+/* ---------- Equipa (reaproveita .grelha-galeria / .galeria-item da página Galeria) ---------- */
+.secao-equipe { background: var(--bruma); }
+.galeria-item-equipe { position: relative; }
+.galeria-item-legenda {
+    position: absolute; left: 0; right: 0; bottom: 0; padding: 16px 14px 12px;
+    background: linear-gradient(0deg, rgba(18,23,47,0.85) 0%, rgba(18,23,47,0) 100%);
+}
+.galeria-item-nome { color: var(--branco); font-weight: 700; margin: 0; font-size: 0.98rem; }
+.galeria-item-cargo { color: var(--ciano); margin: 2px 0 0; font-size: 0.82rem; }
 
 /* ---------- Topo de páginas internas ---------- */
 .secao-pagina-topo { background: var(--gradiente-marca); padding: 72px 0 56px; color: var(--branco); }
@@ -171,13 +204,15 @@ img { max-width: 100%; display: block; }
 
 /* ---------- Galeria ---------- */
 .grelha-galeria { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
-.galeria-item { border-radius: var(--raio); overflow: hidden; aspect-ratio: 4/3; }
+.galeria-item { border-radius: var(--raio); overflow: hidden; aspect-ratio: 4/3; transition: transform 0.3s ease, box-shadow 0.3s ease; }
 .galeria-item img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s ease; }
+.galeria-item:hover { transform: translateY(-6px); box-shadow: var(--sombra); }
 .galeria-item:hover img { transform: scale(1.05); }
 
 /* ---------- Contacto / Agendamento ---------- */
 .grelha-contacto { display: grid; grid-template-columns: 0.9fr 1.1fr; gap: 48px; align-items: start; }
-.info-contacto-item { margin-bottom: 22px; }
+.info-contacto-item { margin-bottom: 22px; transition: transform 0.2s ease; }
+.info-contacto-item:hover { transform: translateX(4px); }
 .info-contacto-item h3 { margin-bottom: 4px; font-size: 1rem; }
 .info-contacto-item p { margin-bottom: 0; }
 
@@ -187,6 +222,10 @@ img { max-width: 100%; display: block; }
 .campo input, .campo select, .campo textarea {
     width: 100%; padding: 12px 14px; border-radius: 10px; border: 1px solid rgba(28,42,109,0.18);
     font-family: var(--fonte-corpo); font-size: 0.95rem; background: var(--branco);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+.campo input:focus, .campo select:focus, .campo textarea:focus {
+    border-color: var(--roxo); box-shadow: 0 0 0 3px rgba(114,56,214,0.15); transform: translateY(-1px); outline: none;
 }
 .campo textarea { resize: vertical; min-height: 100px; }
 .campo-linha { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
@@ -195,14 +234,11 @@ img { max-width: 100%; display: block; }
 .mensagem-sucesso { background: #e2f8ec; color: #15803d; }
 .mensagem-erro { background: #fde2e2; color: #b91c1c; }
 
-.secao-equipe { background: var(--bruma); }
-.galeria-item-equipe { position: relative; }
-.galeria-item-legenda {
-    position: absolute; left: 0; right: 0; bottom: 0; padding: 16px 14px 12px;
-    background: linear-gradient(0deg, rgba(18,23,47,0.85) 0%, rgba(18,23,47,0) 100%);
-}
-.galeria-item-nome { color: var(--branco); font-weight: 700; margin: 0; font-size: 0.98rem; }
-.galeria-item-cargo { color: var(--ciano); margin: 2px 0 0; font-size: 0.82rem; }
+/* ---------- Aparecer ao rolar (fade + translate) ----------
+   Classe aplicada via JS (assets/js/main.js) aos cartões e blocos de cada secção.
+   Não precisas de adicionar isto manualmente no HTML. */
+.reveal { opacity: 0; transform: translateY(28px); transition: opacity 0.7s ease, transform 0.7s ease; }
+.reveal.reveal-visivel { opacity: 1; transform: translateY(0); }
 
 /* ---------- Responsivo ---------- */
 @media (max-width: 900px) {
@@ -231,6 +267,12 @@ img { max-width: 100%; display: block; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-    .hero-slide, .botao, .cartao-servico { transition: none; }
+    .hero-slide, .botao, .cartao-servico, .galeria-item, .cartao-destaque,
+    .nav-link, .lista-check li, .link-seta, .redes_sociais, .marca,
+    .info-contacto-item, .rodape ul li a, .hero-marcador,
+    .campo input, .campo select, .campo textarea { transition: none; }
+    #conteudo, .hero-eyebrow, .hero-titulo, .hero-texto, .hero-acoes, .reveal {
+        animation: none !important; opacity: 1 !important; transform: none !important;
+    }
     html { scroll-behavior: auto; }
 }
