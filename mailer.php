@@ -140,10 +140,10 @@ function sendClinicNotification(
         $mail = getMailer();
         addRecipientsFromEnv($mail);
 
-        $mail->Subject = 'Novo pedido de agendamento recebido';
+        $mail->Subject = 'Nova marcação de consulta recebida';
 
         $body_lines = [
-            "Novo agendamento (#{$idAgendamento}):",
+            "Resumo do Agendamento:",
             '',
             "Nome: {$nomeCliente}",
             "E-mail: {$emailCliente}",
