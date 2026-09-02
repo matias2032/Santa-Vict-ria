@@ -64,21 +64,12 @@ function addRecipientsFromEnv(PHPMailer $mail, string $default = TO_EMAIL): void
 /**
  * Envia o e-mail de auto-resposta ao cliente após um pedido de agendamento.
  *
- * NOTA (i18n futuro):
- * Por enquanto os textos estão fixos em português, diretamente no código.
- * Quando evoluirmos para suporte bilíngue (pt/en), estes textos devem voltar
- * a ser carregados via includes/i18n.php + loadTranslations($lang), tal como
- * estava inicialmente previsto. O parâmetro $lang já fica aqui pronto para
- * essa altura, mas não é usado por agora.
- *
- * @param float|null $servicePrice Preço do tratamento (coluna `preco` da tabela `tratamentos`).
- *                                 Passe null quando não houver tratamento selecionado.
+ * @param array $servicos Lista de serviços [ ['nome' => ..., 'preco' => ...], ... ]
  */
 function sendAutoReply(
     string $toEmail,
     string $toName,
-    string $serviceType = '',
-    ?float $servicePrice = null,
+    array $servicos = [],
     string $lang = 'pt'
 ): bool {
     try {
@@ -87,30 +78,41 @@ function sendAutoReply(
 
         $mail->Subject = 'Recebemos o seu pedido de agendamento - Centro Médico Santa Victória';
 
-        $linhaServico = 'Recebemos o seu pedido de agendamento e vamos analisá-lo com atenção.';
-        if ($serviceType !== '') {
-            $linhaServico = 'Recebemos o seu pedido de agendamento para o serviço "' . $serviceType . '"';
-            $linhaServico .= $servicePrice !== null
-                ? ' (' . formatarPrecoMT($servicePrice) . ').'
-                : '.';
+        $linhasServico = [];
+        if (!empty($servicos)) {
+            $linhasServico[] = 'Recebemos o seu pedido de agendamento para os seguintes serviços:';
+            $total = 0;
+            foreach ($servicos as $s) {
+                $preco = (float)$s['preco'];
+                $total += $preco;
+                $linhasServico[] = ' - ' . $s['nome'] . ': ' . formatarPrecoMT($preco);
+            }
+            $linhasServico[] = '';
+            $linhasServico[] = 'Valor total estimado: ' . formatarPrecoMT($total);
+        } else {
+            $linhasServico[] = 'Recebemos o seu pedido de agendamento e vamos analisá-lo com atenção.';
         }
 
-        $body_lines = [
-            'Olá ' . $toName . ',',
-            '',
-            $linhaServico,
-            '',
-            'A nossa equipa vai confirmar a disponibilidade e entrará em contacto consigo brevemente,',
-            'por telefone ou e-mail, para combinar a data e hora exatas da sua consulta.',
-            '',
-             'Se precisar de algo urgente ou quiser falar connosco, use os contactos abaixo ',
-            'Telefone: +258 87 000 0345 ou +258 85 282 4765',
-            'Obrigado pela confiança em escolher o Centro Médico Santa Victória.',
-            'Cuidamos de si.',
-            '',
-            'Com os melhores cumprimentos,',
-            'Equipa do Centro Médico Santa Victória',
-        ];
+        $body_lines = array_merge(
+            [
+                'Olá ' . $toName . ',',
+                '',
+            ],
+            $linhasServico,
+            [
+                '',
+                'A nossa equipe vai confirmar a disponibilidade e entrará em contacto consigo brevemente,',
+                'por telefone ou e-mail, para combinar a data e hora exatas da sua consulta.',
+                '',
+                'Se precisar de algo urgente ou quiser falar connosco, use os contactos abaixo:',
+                'Telefone: +258 87 000 0345 ou +258 85 282 4765',
+                'Obrigado pela confiança em escolher o Centro Médico Santa Victória.',
+                'Cuidamos de si.',
+                '',
+                'Com os melhores cumprimentos,',
+                'Equipa do Centro Médico Santa Victória',
+            ]
+        );
 
         $mail->Body = implode("\r\n", $body_lines);
         $mail->send();
@@ -129,7 +131,7 @@ function sendAutoReply(
  * e-mails separados por vírgula, graças a addRecipientsFromEnv().
  */
 function sendClinicNotification(
-    int $idAgendamento,
+    array $servicos,
     string $nomeCliente,
     string $emailCliente,
     string $telefone,
@@ -142,6 +144,21 @@ function sendClinicNotification(
 
         $mail->Subject = 'Nova marcação de consulta recebida';
 
+$textoServicos = 'Nenhum indicado';
+        $textoTotal = null;
+
+        if (!empty($servicos)) {
+            $listaStr = [];
+            $total = 0;
+            foreach ($servicos as $s) {
+                $preco = (float)$s['preco'];
+                $total += $preco;
+                $listaStr[] = $s['nome'] . ' (' . formatarPrecoMT($preco) . ')';
+            }
+            $textoServicos = implode(', ', $listaStr);
+            $textoTotal = "Total estimado: " . formatarPrecoMT($total);
+        }
+
         $body_lines = [
             "Resumo do Agendamento:",
             '',
@@ -150,7 +167,13 @@ function sendClinicNotification(
             "Telefone: " . ($telefone !== '' ? $telefone : 'não indicado'),
             "Data preferencial: " . ($dataPreferencial ?: 'não indicada'),
             "Mensagem: " . ($mensagem ?: '-'),
+            "Serviços solicitados: {$textoServicos}",
         ];
+
+        // Se houver total calculado, adiciona na linha seguinte
+        if ($textoTotal !== null) {
+            $body_lines[] = $textoTotal;
+        }
 
         $mail->Body = implode("\r\n", $body_lines);
         $mail->send();

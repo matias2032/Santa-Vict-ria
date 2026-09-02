@@ -9,12 +9,14 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
-$nomeCliente   = trim($_POST['nome_cliente'] ?? '');
-$emailCliente  = trim($_POST['email_cliente'] ?? '');
-$telefone      = trim($_POST['telefone_cliente'] ?? '');
-$idTratamento  = !empty($_POST['id_tratamento']) ? (int)$_POST['id_tratamento'] : null;
-$dataPref      = !empty($_POST['data_preferencial']) ? $_POST['data_preferencial'] : null;
-$mensagem      = trim($_POST['mensagem'] ?? '');
+$nomeCliente    = trim($_POST['nome_cliente'] ?? '');
+$emailCliente   = trim($_POST['email_cliente'] ?? '');
+$telefone       = trim($_POST['telefone_cliente'] ?? '');
+$idTratamentos  = isset($_POST['id_tratamentos']) && is_array($_POST['id_tratamentos']) 
+                  ? array_map('intval', $_POST['id_tratamentos']) 
+                  : [];
+$dataPref       = !empty($_POST['data_preferencial']) ? $_POST['data_preferencial'] : null;
+$mensagem       = trim($_POST['mensagem'] ?? '');
 
 // Validação simples dos campos obrigatórios
 if ($nomeCliente === '' || !filter_var($emailCliente, FILTER_VALIDATE_EMAIL) || !$pdo) {
@@ -25,14 +27,13 @@ if ($nomeCliente === '' || !filter_var($emailCliente, FILTER_VALIDATE_EMAIL) || 
 try {
     $pdo->beginTransaction();
 
-    // 1. Grava o agendamento
+    // 1. Grava o agendamento (sem campo id_tratamento único)
     $stmt = $pdo->prepare(
         "INSERT INTO agendamentos
-            (id_tratamento, nome_cliente, email_cliente, telefone_cliente, data_preferencial, mensagem, status_agendamento)
-         VALUES (:id_tratamento, :nome_cliente, :email_cliente, :telefone_cliente, :data_preferencial, :mensagem, 'pendente')"
+            (nome_cliente, email_cliente, telefone_cliente, data_preferencial, mensagem, status_agendamento)
+         VALUES (:nome_cliente, :email_cliente, :telefone_cliente, :data_preferencial, :mensagem, 'pendente')"
     );
     $stmt->execute([
-        ':id_tratamento'     => $idTratamento,
         ':nome_cliente'      => $nomeCliente,
         ':email_cliente'     => $emailCliente,
         ':telefone_cliente'  => $telefone ?: null,
@@ -42,26 +43,35 @@ try {
 
     $idAgendamento = (int)$pdo->lastInsertId();
 
-    $pdo->commit();
-
-    // Nome e preço do tratamento selecionado (para usar na auto-resposta), se aplicável
-    $nomeTratamento = '';
-    $precoTratamento = null;
-    if ($idTratamento) {
-        $stmtTrat = $pdo->prepare("SELECT nome, preco FROM tratamentos WHERE id_tratamento = :id");
-        $stmtTrat->execute([':id' => $idTratamento]);
-        $tratamentoInfo = $stmtTrat->fetch();
-        if ($tratamentoInfo) {
-            $nomeTratamento = (string)$tratamentoInfo['nome'];
-            $precoTratamento = (float)$tratamentoInfo['preco'];
+    // 2. Grava a relação com múltiplos tratamentos na tabela intermédia
+    if (!empty($idTratamentos)) {
+        $stmtRel = $pdo->prepare(
+            "INSERT INTO agendamento_tratamentos (id_agendamento, id_tratamento) VALUES (:id_agendamento, :id_tratamento)"
+        );
+        foreach ($idTratamentos as $idTrat) {
+            $stmtRel->execute([
+                ':id_agendamento' => $idAgendamento,
+                ':id_tratamento'  => $idTrat,
+            ]);
         }
     }
 
-    // 2. Envia e-mail de confirmação ao cliente via SMTP (PHPMailer) e regista o resultado
+    $pdo->commit();
+
+    // Busca dados detalhados (nome + preço) dos serviços selecionados
+    $servicosSelecionados = [];
+    if (!empty($idTratamentos)) {
+        $inQuery = implode(',', array_fill(0, count($idTratamentos), '?'));
+        $stmtTrat = $pdo->prepare("SELECT nome, preco FROM tratamentos WHERE id_tratamento IN ($inQuery)");
+        $stmtTrat->execute($idTratamentos);
+        $servicosSelecionados = $stmtTrat->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+// 2. Envia e-mail de confirmação ao cliente via SMTP (PHPMailer) e regista o resultado
     $assuntoCliente = 'Recebemos o seu pedido de agendamento - Centro Médico Santa Victória';
     $erroCliente = null;
     try {
-        $sucessoCliente = sendAutoReply($emailCliente, $nomeCliente, $nomeTratamento, $precoTratamento, 'pt');
+        $sucessoCliente = sendAutoReply($emailCliente, $nomeCliente, $servicosSelecionados, 'pt');
     } catch (\Throwable $e) {
         $sucessoCliente = false;
         $erroCliente = $e->getMessage();
@@ -74,7 +84,7 @@ try {
     $erroClinica = null;
     try {
         $sucessoClinica = sendClinicNotification(
-            $idAgendamento,
+            $servicosSelecionados,
             $nomeCliente,
             $emailCliente,
             $telefone,
