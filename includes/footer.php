@@ -3,7 +3,8 @@
 <footer class="rodape">
     <div class="rodape-interno">
 <div class="rodape-coluna rodape-marca">
-            <img src="assets/images/logo.png" alt="Centro Médico Santa Victória" class="rodape-logo">
+      <a href="index.php" >
+            <img src="assets/images/logo.png" alt="Centro Médico Santa Victória" class="rodape-logo"></a>
             <p><?= t('footer.descricao') ?></p>
 <div class="rodape-redes">
     <a href="https://wa.me/258870000345" aria-label="WhatsApp" target="_blank" class="redes_sociais">
