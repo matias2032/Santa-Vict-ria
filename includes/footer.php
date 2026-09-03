@@ -4,7 +4,7 @@
     <div class="rodape-interno">
         <div class="rodape-coluna rodape-marca">
             <img src="assets/images/logo.png" alt="Centro Médico Santa Victória" class="rodape-logo">
-            <p>Cuidados de saúde próximos, humanos e de confiança. Acompanhamos cada paciente com atenção e profissionalismo.</p>
+            <p>Cuidados de saúde próximos e de confiança. Acompanhamos cada paciente com atenção e profissionalismo.</p>
 <div class="rodape-redes">
     <a href="https://wa.me/258870000345" aria-label="WhatsApp" target="_blank" class="redes_sociais">
         <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true">

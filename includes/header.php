@@ -36,7 +36,7 @@ function navAtivo(string $pagina, string $atual): string {
             <a href="sobre.php" class="<?= navAtivo('sobre.php', $paginaAtual) ?>">Sobre Nós</a>
             <a href="servicos.php" class="<?= navAtivo('servicos.php', $paginaAtual) ?>">Serviços</a>
             <a href="galeria.php" class="<?= navAtivo('galeria.php', $paginaAtual) ?>">Galeria</a>
-            <a href="contacto.php" class="<?= navAtivo('contacto.php', $paginaAtual) ?>">Contacto</a>
+            <a href="contacto.php" class="<?= navAtivo('contacto.php', $paginaAtual) ?>">Contacte-nos</a>
         </nav>
 
         <a href="contacto.php#agendamento" class="botao botao-primario botao-cabecalho">Marcar consulta</a>

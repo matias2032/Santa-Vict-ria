@@ -6,7 +6,7 @@ tags:
 - git
 - hotspot
 created: 2026-09-02
-updated: 2026-09-02
+updated: 2026-09-03
 filenames:
 - assets/css/style.css
 links: []
@@ -14,7 +14,7 @@ kind: code
 status: proposed
 superseded_by: null
 deprecated_at: null
-review_after: 2026-09-02
+review_after: 2026-09-03
 source_chat_id: null
 created_at: 2026-09-02T10:17:29.909418100+00:00
 summary: null

@@ -53,7 +53,7 @@ require_once __DIR__ . '/includes/header.php';
             </div>
             <div class="info-contacto-item">
                 <h3>Horário</h3>
-                <p>Segunda a Domingo: 07h00 ás 22:00</p>
+                <p>Segunda a Domingo: 07h00 ás 22:00 <span class="badge-horario" id="badgeHorario" hidden></span></p>
             </div>
         </div>
 
@@ -129,6 +129,7 @@ require_once __DIR__ . '/includes/header.php';
                             <?php endforeach; ?>
                         </div>
                     </div>
+                    <div class="chips-servicos-selecionados" id="chipsServicos"></div>
                     <span class="resumo-selecao" id="resumoSelecao">0 serviço(s) selecionado(s)</span>
                 </div>
 
@@ -145,6 +146,34 @@ require_once __DIR__ . '/includes/header.php';
     </div>
 </section>
 
+<section class="secao secao-faq">
+    <div class="container">
+        <div class="secao-cabecalho">
+            <p class="eyebrow">Dúvidas frequentes</p>
+            <h2>Perguntas sobre o agendamento de consulta</h2>
+            <p class="texto-lead">Não encontrou a resposta que procurava? Contacte-nos directamente.</p>
+        </div>
+
+        <div class="lista-faq">
+            <details class="item-faq" open>
+                <summary>Preciso de confirmar a marcação depois de enviar o formulário?</summary>
+                <p>Sim. Após recebermos o seu pedido, a nossa equipa entra em contacto para confirmar data e hora definitivas.</p>
+            </details>
+            <details class="item-faq">
+                <summary>Posso escolher mais de um serviço na mesma marcação?</summary>
+                <p>Sim, pode selecionar quantos serviços precisar na lista acima; todos ficam associados ao mesmo pedido de agendamento.</p>
+            </details>
+            <details class="item-faq">
+                <summary>Qual é o horário de atendimento?</summary>
+                <p>Atendemos todos os dias, das 07h00 às 22h00, incluindo fins de semana e feriados.</p>
+            </details>
+            <details class="item-faq">
+                <summary>Não recebi alguma resposta ao meu pedido, o que faço?</summary>
+                <p>Se não tiver notícias nossas em algumas horas, contacte-nos directamente por telefone para agilizar o atendimento.</p>
+            </details>
+        </div>
+    </div>
+</section>
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
@@ -166,10 +195,28 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    // 2. Atualizar contador de selecionados
+    // 2. Atualizar contador e chips dos selecionados
+    const chipsContainer = document.getElementById('chipsServicos');
+
     function atualizarContador() {
-        const selecionados = document.querySelectorAll('.item-servico-checkbox input[type="checkbox"]:checked').length;
-        resumo.textContent = selecionados + ' serviço(s) selecionado(s)';
+        const marcados = document.querySelectorAll('.item-servico-checkbox input[type="checkbox"]:checked');
+        resumo.textContent = marcados.length + ' serviço(s) selecionado(s)';
+
+        chipsContainer.innerHTML = '';
+        marcados.forEach((cb) => {
+            const nome = cb.closest('.item-servico-checkbox').querySelector('.nome-servico').textContent;
+
+            const chip = document.createElement('span');
+            chip.className = 'chip-servico';
+            chip.innerHTML = '<span>' + nome + '</span><button type="button" class="chip-servico-remover" aria-label="Remover ' + nome + '">&times;</button>';
+
+            chip.querySelector('.chip-servico-remover').addEventListener('click', function () {
+                cb.checked = false;
+                atualizarContador();
+            });
+
+            chipsContainer.appendChild(chip);
+        });
     }
 
 // Reordena itens marcados para o topo ao carregar a página
