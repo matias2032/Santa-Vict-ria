@@ -2,13 +2,17 @@
 <?php
 require_once __DIR__ . '/config/db.php';
 require_once __DIR__ . '/config/idioma.php';
+require_once __DIR__ . '/config/disponibilidade.php';
 $tituloPagina = t('contacto.titulo_pagina');
 
 // Lista de tratamentos para o formulário (inclui preço)
 $tratamentos = buscarTratamentosTraduzidos($pdo, $idioma);
+$diasPorTratamento = buscarDiasPorTratamentos($pdo, array_column($tratamentos, 'id_tratamento'));
 
 // Estado vindo do processar_agendamento.php (via redirect com querystring)
-$estado = $_GET['estado'] ?? null; // 'sucesso' ou 'erro'
+$estado = $_GET['estado'] ?? null; // 'sucesso', 'erro' ou 'indisponivel'
+$mensagemIndisponibilidade = $_GET['msg'] ?? '';
+$dataPreSelecionada = $_GET['data'] ?? '';
 $tratamentosPreSelecionados = [];
 if (isset($_GET['tratamento'])) {
     $tratamentosPreSelecionados = array_map('intval', (array)$_GET['tratamento']);
@@ -60,6 +64,10 @@ require_once __DIR__ . '/includes/header.php';
                 <div class="mensagem-estado mensagem-erro" id="mensagemEstado">
                     <?= htmlspecialchars(t('contacto.mensagem.erro')) ?>
                 </div>
+            <?php elseif ($estado === 'indisponivel' && $mensagemIndisponibilidade !== ''): ?>
+                <div class="mensagem-estado mensagem-aviso">
+                    <?= htmlspecialchars($mensagemIndisponibilidade) ?>
+                </div>
             <?php endif; ?>
 
             <?php if ($estado === 'sucesso' || $estado === 'erro'): ?>
@@ -100,7 +108,7 @@ require_once __DIR__ . '/includes/header.php';
 
                 <div class="campo">
                     <label for="data_preferencial"><?= htmlspecialchars(t('contacto.form.data_label')) ?></label>
-                    <input type="date" id="data_preferencial" name="data_preferencial">
+                    <input type="date" id="data_preferencial" name="data_preferencial" value="<?= htmlspecialchars($dataPreSelecionada) ?>">
                 </div>
 
                 <div class="campo">
@@ -109,15 +117,38 @@ require_once __DIR__ . '/includes/header.php';
                     <!-- Campo de Pesquisa em Tempo Real -->
                     <input type="text" id="buscar_servico" placeholder="<?= htmlspecialchars(t('contacto.form.buscar_placeholder')) ?>" style="margin-bottom: 10px;">
 
+                    <div class="aviso-disponibilidade" id="avisoDisponibilidade" hidden>
+                        <?= htmlspecialchars(t('contacto.form.aviso_dias_removidos')) ?>
+                    </div>
+
                     <!-- Contêiner com Rolagem Vertical e Contador -->
                     <div class="caixa-servicos-scroll">
                         <div class="lista-servicos-pesquisa" id="listaServicos">
                             <?php foreach ($tratamentos as $tratamento): ?>
-                                <?php $idTrat = (int)$tratamento['id_tratamento']; ?>
-                                <label class="item-servico-checkbox" data-nome="<?= mb_strtolower(htmlspecialchars($tratamento['nome'])) ?>">
+                                <?php
+                                    $idTrat = (int)$tratamento['id_tratamento'];
+                                    $diasTrat = $diasPorTratamento[$idTrat] ?? [];
+                                    $diasAttr = implode(',', $diasTrat); // vazio = sem restrição (todos os dias)
+                                ?>
+                                <label class="item-servico-checkbox" data-nome="<?= mb_strtolower(htmlspecialchars($tratamento['nome'])) ?>" data-dias="<?= htmlspecialchars($diasAttr) ?>">
                                     <input type="checkbox" name="id_tratamentos[]" value="<?= $idTrat ?>"
                                         <?= in_array($idTrat, $tratamentosPreSelecionados, true) ? 'checked' : '' ?>>
-                                    <span class="nome-servico"><?= htmlspecialchars($tratamento['nome']) ?></span>
+                                    <span class="nome-servico">
+                                        <span class="nome-servico-texto"><?= htmlspecialchars($tratamento['nome']) ?></span>
+                                        <span class="dias-disponiveis-servico">
+                                            <?php if (!empty($diasTrat)): ?>
+                                                <?= sprintf(
+                                                    htmlspecialchars(t('contacto.form.disponivel_dias')),
+                                                    htmlspecialchars(implode(', ', array_map(
+                                                        fn($d) => t(DIAS_SEMANA_ABREV_CHAVES[$d]),
+                                                        $diasTrat
+                                                    )))
+                                                ) ?>
+                                            <?php else: ?>
+                                                <?= htmlspecialchars(t('contacto.form.disponivel_todos_dias')) ?>
+                                            <?php endif; ?>
+                                        </span>
+                                    </span>
                                     <span class="preco-servico"><?= number_format((float)$tratamento['preco'], 2, ',', '.') ?> MT</span>
                                 </label>
                             <?php endforeach; ?>
@@ -202,7 +233,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         chipsContainer.innerHTML = '';
         marcados.forEach((cb) => {
-            const nome = cb.closest('.item-servico-checkbox').querySelector('.nome-servico').textContent;
+            const nome = cb.closest('.item-servico-checkbox').querySelector('.nome-servico').textContent.trim();
 
             const chip = document.createElement('span');
             chip.className = 'chip-servico';
@@ -229,6 +260,55 @@ document.addEventListener('DOMContentLoaded', function () {
 
     checkboxes.forEach(cb => cb.addEventListener('change', atualizarContador));
     atualizarContador(); // Inicializa
+
+    // 3. Bloqueio de serviços indisponíveis no dia da semana escolhido.
+    // Espelha a mesma lógica do backend (config/disponibilidade.php), usando
+    // o data-dias já renderizado em cada item — não é uma segunda fonte de verdade,
+    // apenas ajuda visual: a validação final e obrigatória continua no servidor.
+    const inputData = document.getElementById('data_preferencial');
+    const avisoDisponibilidade = document.getElementById('avisoDisponibilidade');
+
+    function diaIsoDaData(valorData) {
+        if (!valorData) return null;
+        const data = new Date(valorData + 'T00:00:00');
+        if (isNaN(data.getTime())) return null;
+        const diaJs = data.getDay(); // 0 (domingo) a 6 (sábado)
+        return diaJs === 0 ? 7 : diaJs; // converte para ISO: 1 (segunda) a 7 (domingo)
+    }
+
+    function aplicarDisponibilidadeDoDia() {
+        const diaIso = diaIsoDaData(inputData.value);
+        let algumRemovido = false;
+
+        itens.forEach(item => {
+            const diasAttr = item.getAttribute('data-dias');
+            const checkbox = item.querySelector('input[type="checkbox"]');
+            const temRestricao = diasAttr && diasAttr.trim() !== '';
+            const diasPermitidos = temRestricao ? diasAttr.split(',').map(Number) : [];
+            const indisponivel = diaIso !== null && temRestricao && !diasPermitidos.includes(diaIso);
+
+            item.classList.toggle('item-servico-indisponivel', indisponivel);
+            checkbox.disabled = indisponivel;
+
+            if (indisponivel && checkbox.checked) {
+                checkbox.checked = false;
+                algumRemovido = true;
+            }
+        });
+
+        if (algumRemovido) {
+            atualizarContador();
+        }
+
+        if (avisoDisponibilidade) {
+            avisoDisponibilidade.hidden = !algumRemovido;
+        }
+    }
+
+    if (inputData) {
+        inputData.addEventListener('change', aplicarDisponibilidadeDoDia);
+        aplicarDisponibilidadeDoDia(); // aplica logo ao carregar (ex: data pré-preenchida após um aviso)
+    }
 });
 </script>
 

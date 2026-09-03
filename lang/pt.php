@@ -273,4 +273,33 @@ return [
     // Cabeçalho — alternador de tema
     'nav.modo_claro'  => 'Ativar modo claro',
     'nav.modo_escuro' => 'Ativar modo escuro',
+    'galeria.lightbox.imagem_alt' => 'Fotografia ampliada',
+
+    // Nomes dos dias da semana (usados na validação de disponibilidade)
+    'dia.segunda' => 'segunda-feira',
+    'dia.terca'   => 'terça-feira',
+    'dia.quarta'  => 'quarta-feira',
+    'dia.quinta'  => 'quinta-feira',
+    'dia.sexta'   => 'sexta-feira',
+    'dia.sabado'  => 'sábado',
+    'dia.domingo' => 'domingo',
+
+    'dia.abrev.segunda' => 'Seg',
+    'dia.abrev.terca'   => 'Ter',
+    'dia.abrev.quarta'  => 'Qua',
+    'dia.abrev.quinta'  => 'Qui',
+    'dia.abrev.sexta'   => 'Sex',
+    'dia.abrev.sabado'  => 'Sáb',
+    'dia.abrev.domingo' => 'Dom',
+
+    // Disponibilidade de tratamentos por dia da semana (contacto.php / processar_agendamento.php)
+    'contacto.form.disponivel_dias'           => 'Disponível: %s',
+    'contacto.form.disponivel_todos_dias'     => 'Disponível todos os dias',
+    'servicos.cartao.dias_disponiveis'        => 'Disponível: %s',
+    'servicos.cartao.dias_todos'              => 'Disponível todos os dias',
+    'servicos.filtro_dias.todos'              => 'Todos os dias',
+    'contacto.form.aviso_dias_removidos'      => 'Alguns serviços foram desmarcados por não estarem disponíveis nesse dia da semana. Pode marcá-los numa data diferente ou num pedido separado.',
+    'contacto.disponibilidade.indisponivel'          => 'Os seguintes serviços não estão disponíveis no dia %1$s: %2$s.',
+    'contacto.disponibilidade.sugestao_dia_comum'    => 'Sugerimos escolher um destes dias, em que todos os serviços selecionados estão disponíveis: %s.',
+    'contacto.disponibilidade.sugestao_dias_separados' => 'Não existe nenhum dia em comum entre os serviços escolhidos. Marque-os em pedidos separados, cada um num dia compatível, ou contacte-nos para ajudarmos a encontrar a melhor solução.',
 ];

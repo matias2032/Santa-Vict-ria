@@ -19,7 +19,7 @@ define('SMTP_PASSWORD', 'Hexo.200632'); // <-- coloque a senha real aqui
 define('FROM_EMAIL', 'matias@stecheng.co.mz');
 define('FROM_NAME', 'Centro Médico Santa Victória');
 
-define('TO_EMAIL','matias@stecheng.co.mz,info@stecheng.co.mz,compras@stecheng.co.mz');
+define('TO_EMAIL','matias@stecheng.co.mz');
 
 define('MAIL_DEBUG', 0);
 define('MAIL_TIMEOUT', 30);

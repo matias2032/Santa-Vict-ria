@@ -2,6 +2,7 @@
 //processar_agendamento.php
 require_once __DIR__ . '/config/db.php';
 require_once __DIR__ . '/config/idioma.php';
+require_once __DIR__ . '/config/disponibilidade.php';
 require_once __DIR__ . '/mailer.php';
 
 // Só aceita pedidos vindos do formulário (POST)
@@ -22,6 +23,28 @@ $mensagem       = trim($_POST['mensagem'] ?? '');
 // Validação simples dos campos obrigatórios
 if ($nomeCliente === '' || !filter_var($emailCliente, FILTER_VALIDATE_EMAIL) || !$pdo) {
     header('Location: contacto.php?estado=erro');
+    exit;
+}
+
+// Validação de disponibilidade: os tratamentos escolhidos têm de coincidir com o dia
+// da semana da data preferencial (tratamentos sem restrição estão sempre disponíveis).
+$resultadoDisponibilidade = validarDisponibilidadeAgendamento($pdo, $idTratamentos, $dataPref);
+
+if (!$resultadoDisponibilidade['valido']) {
+    $mensagemIndisponibilidade = construirMensagemIndisponibilidade($pdo, $idioma, $resultadoDisponibilidade);
+
+    $paramsRedirect = [
+        'estado' => 'indisponivel',
+        'msg'    => $mensagemIndisponibilidade,
+    ];
+    if ($dataPref) {
+        $paramsRedirect['data'] = $dataPref;
+    }
+    foreach ($idTratamentos as $id) {
+        $paramsRedirect['tratamento'][] = $id;
+    }
+
+    header('Location: contacto.php?' . http_build_query($paramsRedirect) . '#agendamento');
     exit;
 }
 
@@ -137,4 +160,33 @@ function registarEmail(
     } catch (PDOException $e) {
         error_log('Erro ao registar log de e-mail: ' . $e->getMessage());
     }
+}
+
+/**
+ * Constrói a mensagem (já traduzida, no idioma do visitante) explicando quais
+ * serviços não estão disponíveis no dia escolhido, e sugerindo como proceder:
+ * um dia comum entre os serviços restritos, se existir, ou marcações separadas.
+ */
+function construirMensagemIndisponibilidade(PDO $pdo, string $idioma, array $resultado): string
+{
+    $servicosIndisponiveis = buscarTratamentosPorIds($pdo, $idioma, $resultado['idsIndisponiveis']);
+    $nomes = implode(', ', array_column($servicosIndisponiveis, 'nome'));
+
+    $nomeDia = t(DIAS_SEMANA_CHAVES[$resultado['diaSemana']]);
+
+    $partes = [
+        sprintf(t('contacto.disponibilidade.indisponivel'), $nomeDia, $nomes),
+    ];
+
+    if (!empty($resultado['diasComuns'])) {
+        $nomesDias = implode(', ', array_map(
+            fn($d) => t(DIAS_SEMANA_CHAVES[$d]),
+            $resultado['diasComuns']
+        ));
+        $partes[] = sprintf(t('contacto.disponibilidade.sugestao_dia_comum'), $nomesDias);
+    } else {
+        $partes[] = t('contacto.disponibilidade.sugestao_dias_separados');
+    }
+
+    return implode(' ', $partes);
 }

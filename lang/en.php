@@ -273,4 +273,33 @@ return [
     // Header — theme toggle
     'nav.modo_claro'  => 'Switch to light mode',
     'nav.modo_escuro' => 'Switch to dark mode',
+    'galeria.lightbox.imagem_alt' => 'Enlarged photo',
+
+    // Weekday names (used in availability validation)
+    'dia.segunda' => 'Monday',
+    'dia.terca'   => 'Tuesday',
+    'dia.quarta'  => 'Wednesday',
+    'dia.quinta'  => 'Thursday',
+    'dia.sexta'   => 'Friday',
+    'dia.sabado'  => 'Saturday',
+    'dia.domingo' => 'Sunday',
+
+    'dia.abrev.segunda' => 'Mon',
+    'dia.abrev.terca'   => 'Tue',
+    'dia.abrev.quarta'  => 'Wed',
+    'dia.abrev.quinta'  => 'Thu',
+    'dia.abrev.sexta'   => 'Fri',
+    'dia.abrev.sabado'  => 'Sat',
+    'dia.abrev.domingo' => 'Sun',
+
+    // Treatment availability by weekday (contacto.php / processar_agendamento.php)
+    'contacto.form.disponivel_dias'           => 'Available: %s',
+    'contacto.form.disponivel_todos_dias'     => 'Available every day',
+    'servicos.cartao.dias_disponiveis'        => 'Available: %s',
+    'servicos.cartao.dias_todos'              => 'Available every day',
+    'servicos.filtro_dias.todos'              => 'All days',
+    'contacto.form.aviso_dias_removidos'      => 'Some services were unchecked because they are not available on that day of the week. You can book them on a different date or in a separate request.',
+    'contacto.disponibilidade.indisponivel'          => 'The following services are not available on %1$s: %2$s.',
+    'contacto.disponibilidade.sugestao_dia_comum'    => 'We suggest choosing one of these days, when all selected services are available: %s.',
+    'contacto.disponibilidade.sugestao_dias_separados' => 'There is no common day between the services you chose. Please book them in separate requests, each on a compatible day, or contact us so we can help find the best solution.',
 ];
