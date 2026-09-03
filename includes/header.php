@@ -73,15 +73,41 @@ function urlComIdioma(string $idiomaAlvo, string $paginaAtual): string {
         </nav>
 
         <div class="acoes-cabecalho">
-            <div class="seletor-idioma" role="group" aria-label="<?= htmlspecialchars(t('nav.selecionar_idioma')) ?>">
-                <a href="<?= htmlspecialchars(urlComIdioma('pt', $paginaAtual)) ?>"
-                   class="seletor-idioma-link<?= $idioma === 'pt' ? ' ativo' : '' ?>"
-                   <?= $idioma === 'pt' ? 'aria-current="true"' : '' ?>>PT</a>
-                <span class="seletor-idioma-separador" aria-hidden="true">|</span>
-                <a href="<?= htmlspecialchars(urlComIdioma('en', $paginaAtual)) ?>"
-                   class="seletor-idioma-link<?= $idioma === 'en' ? ' ativo' : '' ?>"
-                   <?= $idioma === 'en' ? 'aria-current="true"' : '' ?>>EN</a>
-            </div>
+        <div class="seletor-idioma" role="group" aria-label="<?= htmlspecialchars(t('nav.selecionar_idioma')) ?>">
+            <a href="<?= htmlspecialchars(urlComIdioma('pt', $paginaAtual)) ?>"
+               class="seletor-idioma-pill<?= $idioma === 'pt' ? ' ativo' : '' ?>"
+               <?= $idioma === 'pt' ? 'aria-current="true"' : '' ?>>
+                <span class="seletor-idioma-bandeira">
+                    <svg viewBox="0 0 40 40" width="20" height="20" aria-hidden="true">
+                        <defs><clipPath id="clipBandeiraPT"><circle cx="20" cy="20" r="20"/></clipPath></defs>
+                        <g clip-path="url(#clipBandeiraPT)">
+                            <rect width="16" height="40" fill="#046A38"/>
+                            <rect x="16" width="24" height="40" fill="#DA291C"/>
+                            <circle cx="16" cy="20" r="6" fill="#FFCC00" stroke="#046A38" stroke-width="1"/>
+                        </g>
+                    </svg>
+                </span>
+                <span>PT</span>
+            </a>
+
+            <a href="<?= htmlspecialchars(urlComIdioma('en', $paginaAtual)) ?>"
+               class="seletor-idioma-pill<?= $idioma === 'en' ? ' ativo' : '' ?>"
+               <?= $idioma === 'en' ? 'aria-current="true"' : '' ?>>
+                <span class="seletor-idioma-bandeira">
+                    <svg viewBox="0 0 40 40" width="20" height="20" aria-hidden="true">
+                        <defs><clipPath id="clipBandeiraEN"><circle cx="20" cy="20" r="20"/></clipPath></defs>
+                        <g clip-path="url(#clipBandeiraEN)">
+                            <rect width="40" height="40" fill="#00247D"/>
+                            <path d="M0 0 L40 40 M40 0 L0 40" stroke="#fff" stroke-width="6"/>
+                            <path d="M0 0 L40 40 M40 0 L0 40" stroke="#CF142B" stroke-width="2.5"/>
+                            <path d="M20 0 V40 M0 20 H40" stroke="#fff" stroke-width="11"/>
+                            <path d="M20 0 V40 M0 20 H40" stroke="#CF142B" stroke-width="6"/>
+                        </g>
+                    </svg>
+                </span>
+                <span>EN</span>
+            </a>
+        </div>
 
             <button type="button" class="alternar-tema" id="alternarTema"
                     aria-pressed="false"
