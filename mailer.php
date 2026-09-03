@@ -44,6 +44,7 @@ function getMailer(): PHPMailer
 /**
  * Formata um valor numérico como preço em Metical (MT), no padrão pt-MZ.
  * Ex: 2500.5 -> "2.500,50 MT"
+ * Mantido igual em qualquer idioma: a moeda (Metical/MT) nunca é traduzida.
  */
 function formatarPrecoMT(float $valor): string
 {
@@ -62,7 +63,26 @@ function addRecipientsFromEnv(PHPMailer $mail, string $default = TO_EMAIL): void
 }
 
 /**
- * Envia o e-mail de auto-resposta ao cliente após um pedido de agendamento.
+ * Carrega o array de traduções diretamente do ficheiro /lang/{$lang}.php,
+ * sem depender do estado global $idioma/t() de config/idioma.php.
+ * Isto permite que mailer.php seja chamado de forma independente
+ * (ex: futuros scripts de reenvio ou cron jobs) sempre com o idioma correto.
+ */
+function carregarTraducoesEmail(string $lang): array
+{
+    $lang = in_array($lang, ['pt', 'en'], true) ? $lang : 'pt';
+    $arquivo = __DIR__ . "/lang/{$lang}.php";
+
+    if (!file_exists($arquivo)) {
+        $arquivo = __DIR__ . '/lang/pt.php';
+    }
+
+    return require $arquivo;
+}
+
+/**
+ * Envia o e-mail de auto-resposta ao cliente após um pedido de agendamento,
+ * no idioma escolhido pelo próprio cliente ($lang).
  *
  * @param array $servicos Lista de serviços [ ['nome' => ..., 'preco' => ...], ... ]
  */
@@ -73,14 +93,17 @@ function sendAutoReply(
     string $lang = 'pt'
 ): bool {
     try {
+        $textos = carregarTraducoesEmail($lang);
+        $tt = fn(string $chave) => $textos[$chave] ?? $chave;
+
         $mail = getMailer();
         $mail->addAddress($toEmail, $toName);
 
-        $mail->Subject = 'Recebemos o seu pedido de agendamento - Centro Médico Santa Victória';
+        $mail->Subject = $tt('email.cliente.assunto');
 
         $linhasServico = [];
         if (!empty($servicos)) {
-            $linhasServico[] = 'Recebemos o seu pedido de agendamento para os seguintes serviços:';
+            $linhasServico[] = $tt('email.cliente.intro_com_servicos');
             $total = 0;
             foreach ($servicos as $s) {
                 $preco = (float)$s['preco'];
@@ -88,29 +111,29 @@ function sendAutoReply(
                 $linhasServico[] = ' - ' . $s['nome'] . ': ' . formatarPrecoMT($preco);
             }
             $linhasServico[] = '';
-            $linhasServico[] = 'Valor total estimado: ' . formatarPrecoMT($total);
+            $linhasServico[] = sprintf($tt('email.cliente.total_estimado'), formatarPrecoMT($total));
         } else {
-            $linhasServico[] = 'Recebemos o seu pedido de agendamento e vamos analisá-lo com atenção.';
+            $linhasServico[] = $tt('email.cliente.intro_sem_servicos');
         }
 
         $body_lines = array_merge(
             [
-                'Olá ' . $toName . ',',
+                sprintf($tt('email.cliente.saudacao'), $toName),
                 '',
             ],
             $linhasServico,
             [
                 '',
-                'A nossa equipe vai confirmar a disponibilidade e entrará em contacto consigo brevemente,',
-                'por telefone ou e-mail, para combinar a data e hora exatas da sua consulta.',
+                $tt('email.cliente.confirmacao_1'),
+                $tt('email.cliente.confirmacao_2'),
                 '',
-                'Se precisar de algo urgente ou quiser falar connosco, use os contactos abaixo:',
-                'Telefone: +258 87 000 0345 ou +258 85 282 4765',
-                'Obrigado pela confiança em escolher o Centro Médico Santa Victória.',
-                'Cuidamos de si.',
+                $tt('email.cliente.texto_urgente'),
+                $tt('email.cliente.texto_telefone'),
+                $tt('email.cliente.texto_obrigado'),
+                $tt('email.cliente.texto_slogan'),
                 '',
-                'Com os melhores cumprimentos,',
-                'Equipa do Centro Médico Santa Victória',
+                $tt('email.cliente.despedida'),
+                $tt('email.cliente.assinatura'),
             ]
         );
 
@@ -127,6 +150,8 @@ function sendAutoReply(
 
 /**
  * Envia a notificação interna à clínica sobre um novo pedido de agendamento.
+ * Sempre em português — a equipa da clínica só lê PT, independentemente
+ * do idioma em que o cliente navegou o site ou fez a marcação.
  * Usa TO_EMAIL (config.php) como lista de destinatários — pode conter vários
  * e-mails separados por vírgula, graças a addRecipientsFromEnv().
  */
@@ -144,7 +169,7 @@ function sendClinicNotification(
 
         $mail->Subject = 'Nova marcação de consulta recebida';
 
-$textoServicos = 'Nenhum indicado';
+        $textoServicos = 'Nenhum indicado';
         $textoTotal = null;
 
         if (!empty($servicos)) {

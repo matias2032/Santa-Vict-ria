@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . '/config/idioma.php';
+
 $tituloPagina = 'Sobre Nós';
 
 $extensoesValidas = ['jpg', 'jpeg', 'png', 'webp'];
@@ -88,11 +90,10 @@ require_once __DIR__ . '/includes/header.php';
 
 <section class="secao secao-pagina-topo">
     <div class="container">
-        <p class="eyebrow">Sobre nós</p>
-        <h1>Uma equipa dedicada à sua saúde</h1>
+        <p class="eyebrow"><?= t('sobre.topo.eyebrow') ?></p>
+        <h1><?= t('sobre.topo.titulo') ?></h1>
         <p class="texto-lead" style="max-width:640px">
-            O Centro Médico Santa Victória nasceu do compromisso de oferecer cuidados de saúde
-            de qualidade, acessíveis e humanos à comunidade de Tete.
+            <?= t('sobre.topo.texto') ?>
         </p>
     </div>
 </section>
@@ -121,30 +122,29 @@ require_once __DIR__ . '/includes/header.php';
 <section class="secao">
     <div class="container grelha-2">
         <div>
-            <p class="eyebrow">A nossa missão</p>
-            <h2>Cuidar com rigor, tratar com humanidade</h2>
+            <p class="eyebrow"><?= t('sobre.missao.eyebrow') ?></p>
+            <h2><?= t('sobre.missao.titulo') ?></h2>
             <p>
-                Prestar cuidados médicos com rigor científico e proximidade humana, acompanhando
-                cada paciente com atenção individual, desde a consulta até ao acompanhamento pós-tratamento.
+                <?= t('sobre.missao.texto') ?>
             </p>
             <ul class="lista-check">
-                <li>Atendimento humanizado e personalizado</li>
-                <li>Equipa médica qualificada e em constante formação</li>
-                <li>Infraestrutura preparada para diagnóstico e tratamento</li>
+                <li><?= t('sobre.missao.item_1') ?></li>
+                <li><?= t('sobre.missao.item_2') ?></li>
+                <li><?= t('sobre.missao.item_3') ?></li>
             </ul>
-            <a href="contacto.php#agendamento" class="link-seta">Marcar a sua consulta</a>
+            <a href="contacto.php#agendamento" class="link-seta"><?= t('sobre.missao.link') ?></a>
         </div>
 
         <?php if ($fotoDestaque): ?>
             <div class="cartao-foto-sobre">
-                <img src="<?= htmlspecialchars($fotoDestaque) ?>" alt="Instalações do Centro Médico Santa Victória" loading="lazy">
-                <span class="cartao-foto-sobre-selo">Ao seu serviço em Tete</span>
+                <img src="<?= htmlspecialchars($fotoDestaque) ?>" alt="<?= t('sobre.missao.foto_alt') ?>" loading="lazy">
+                <span class="cartao-foto-sobre-selo"><?= t('sobre.missao.selo') ?></span>
             </div>
         <?php else: ?>
             <div class="cartao-destaque">
-                <p class="cartao-destaque-eyebrow">O nosso compromisso</p>
-                <h3 class="cartao-destaque-titulo">Sempre perto de si</h3>
-                <p class="cartao-destaque-texto">Cuidados de saúde acessíveis, com uma equipa atenta a cada detalhe do seu bem-estar.</p>
+                <p class="cartao-destaque-eyebrow"><?= t('sobre.missao.fallback_eyebrow') ?></p>
+                <h3 class="cartao-destaque-titulo"><?= t('sobre.missao.fallback_titulo') ?></h3>
+                <p class="cartao-destaque-texto"><?= t('sobre.missao.fallback_texto') ?></p>
             </div>
         <?php endif; ?>
     </div>
@@ -153,9 +153,9 @@ require_once __DIR__ . '/includes/header.php';
 <section class="secao secao-valores">
     <div class="container">
         <div class="secao-cabecalho">
-            <p class="eyebrow">O que nos guia</p>
-            <h2>Missão, visão e valores</h2>
-            <p class="texto-lead">Os princípios que orientam cada decisão e cada atendimento no Centro Médico Santa Victória.</p>
+            <p class="eyebrow"><?= t('sobre.valores.eyebrow') ?></p>
+            <h2><?= t('sobre.valores.titulo') ?></h2>
+            <p class="texto-lead"><?= t('sobre.valores.texto') ?></p>
         </div>
 
         <div class="grelha-valores">
@@ -165,8 +165,8 @@ require_once __DIR__ . '/includes/header.php';
                         <path d="M20.8 4.6a5.4 5.4 0 0 0-7.6 0L12 5.8l-1.2-1.2a5.4 5.4 0 1 0-7.6 7.6L12 21l8.8-8.8a5.4 5.4 0 0 0 0-7.6z"/>
                     </svg>
                 </div>
-                <h3>Missão</h3>
-                <p>Prestar cuidados de saúde acessíveis e de qualidade, com rigor clínico e proximidade humana.</p>
+                <h3><?= t('sobre.valores.missao_titulo') ?></h3>
+                <p><?= t('sobre.valores.missao_texto') ?></p>
             </div>
 
             <div class="cartao-valor">
@@ -176,8 +176,8 @@ require_once __DIR__ . '/includes/header.php';
                         <circle cx="12" cy="12" r="3"/>
                     </svg>
                 </div>
-                <h3>Visão</h3>
-                <p>Ser reconhecidos como referência em cuidados de saúde na região de Tete, pela confiança dos pacientes.</p>
+                <h3><?= t('sobre.valores.visao_titulo') ?></h3>
+                <p><?= t('sobre.valores.visao_texto') ?></p>
             </div>
 
             <div class="cartao-valor">
@@ -189,8 +189,8 @@ require_once __DIR__ . '/includes/header.php';
                         <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
                     </svg>
                 </div>
-                <h3>Valores</h3>
-                <p>Ética, empatia e melhoria contínua — em cada consulta, em cada interação com quem nos procura.</p>
+                <h3><?= t('sobre.valores.valores_titulo') ?></h3>
+                <p><?= t('sobre.valores.valores_texto') ?></p>
             </div>
         </div>
     </div>
@@ -199,31 +199,31 @@ require_once __DIR__ . '/includes/header.php';
 <section class="secao secao-historia">
     <div class="container">
         <div class="secao-cabecalho">
-            <p class="eyebrow">A nossa história</p>
-            <h2>Como chegámos até aqui</h2>
-            <p class="texto-lead"><em>(Exemplo de linha do tempo — ajusta os anos e marcos à história real da clínica.)</em></p>
+            <p class="eyebrow"><?= t('sobre.historia.eyebrow') ?></p>
+            <h2><?= t('sobre.historia.titulo') ?></h2>
+            <p class="texto-lead"><em><?= t('sobre.historia.texto') ?></em></p>
         </div>
 
         <div class="linha-tempo">
             <div class="marco-tempo">
                 <span class="marco-tempo-ano">2016</span>
-                <h3>Fundação</h3>
-                <p>Abertura do Centro Médico Santa Victória, com consulta geral e um pequeno quadro clínico.</p>
+                <h3><?= t('sobre.historia.marco1_titulo') ?></h3>
+                <p><?= t('sobre.historia.marco1_texto') ?></p>
             </div>
             <div class="marco-tempo">
                 <span class="marco-tempo-ano">2019</span>
-                <h3>Expansão de serviços</h3>
-                <p>Introdução de novas especialidades, incluindo pediatria e ginecologia.</p>
+                <h3><?= t('sobre.historia.marco2_titulo') ?></h3>
+                <p><?= t('sobre.historia.marco2_texto') ?></p>
             </div>
             <div class="marco-tempo">
                 <span class="marco-tempo-ano">2022</span>
-                <h3>Novo equipamento</h3>
-                <p>Investimento em equipamento de diagnóstico para reforçar a qualidade do atendimento.</p>
+                <h3><?= t('sobre.historia.marco3_titulo') ?></h3>
+                <p><?= t('sobre.historia.marco3_texto') ?></p>
             </div>
             <div class="marco-tempo">
-                <span class="marco-tempo-ano">Hoje</span>
-                <h3>Ao serviço da comunidade</h3>
-                <p>Uma equipa maior e mais especializada, continuando comprometida com a saúde de Tete.</p>
+                <span class="marco-tempo-ano"><?= t('sobre.historia.marco4_ano') ?></span>
+                <h3><?= t('sobre.historia.marco4_titulo') ?></h3>
+                <p><?= t('sobre.historia.marco4_texto') ?></p>
             </div>
         </div>
     </div>
@@ -232,13 +232,13 @@ require_once __DIR__ . '/includes/header.php';
 <section class="secao secao-equipe">
     <div class="container">
         <div class="secao-cabecalho">
-            <p class="eyebrow">A nossa equipa</p>
-            <h2>Quem cuida de si</h2>
-            <p class="texto-lead">Profissionais dedicados, prontos para acompanhar a sua saúde com atenção e proximidade.</p>
+            <p class="eyebrow"><?= t('sobre.equipe.eyebrow') ?></p>
+            <h2><?= t('sobre.equipe.titulo') ?></h2>
+            <p class="texto-lead"><?= t('sobre.equipe.texto') ?></p>
         </div>
 
         <?php if (empty($equipe)): ?>
-            <p>Ainda não há fotos da equipa. Adiciona-as em <code>assets/images/galeria/equipe/</code>.</p>
+            <p><?= sprintf(t('sobre.equipe.vazio'), '<code>assets/images/galeria/equipe/</code>') ?></p>
         <?php else: ?>
             <div class="grelha-galeria">
                 <?php foreach ($equipe as $membro): ?>
@@ -259,9 +259,9 @@ require_once __DIR__ . '/includes/header.php';
 <section class="secao secao-parceiros">
     <div class="container">
         <div class="secao-cabecalho">
-            <p class="eyebrow">Parcerias</p>
-            <h2>Quem caminha connosco</h2>
-            <p class="texto-lead">Entidades e empresas que colaboram com o Centro Médico Santa Victória.</p>
+            <p class="eyebrow"><?= t('sobre.parceiros.eyebrow') ?></p>
+            <h2><?= t('sobre.parceiros.titulo') ?></h2>
+            <p class="texto-lead"><?= t('sobre.parceiros.texto') ?></p>
         </div>
 
         <div class="grelha-parceiros">
@@ -278,10 +278,10 @@ require_once __DIR__ . '/includes/header.php';
 <section class="secao secao-cta">
     <div class="container secao-cta-interno">
         <div>
-            <h2>Quer conhecer os nossos serviços?</h2>
-            <p>Descubra todas as especialidades disponíveis no nosso centro médico.</p>
+            <h2><?= t('sobre.cta.titulo') ?></h2>
+            <p><?= t('sobre.cta.texto') ?></p>
         </div>
-        <a href="servicos.php" class="botao botao-branco">Ver serviços</a>
+        <a href="servicos.php" class="botao botao-branco"><?= t('sobre.cta.botao') ?></a>
     </div>
 </section>
 

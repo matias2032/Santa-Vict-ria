@@ -1,19 +1,9 @@
 <?php
 require_once __DIR__ . '/config/db.php';
-$tituloPagina = 'Serviços';
+require_once __DIR__ . '/config/idioma.php';
+$tituloPagina = t('servicos.titulo_pagina');
 
-$tratamentos = [];
-if ($pdo) {
-    try {
-        $stmt = $pdo->query("SELECT id_tratamento, nome, descricao, preco 
-                              FROM tratamentos 
-                              WHERE ativo = 1 
-                              ORDER BY nome ASC");
-        $tratamentos = $stmt->fetchAll();
-    } catch (PDOException $e) {
-        error_log('Erro ao carregar tratamentos: ' . $e->getMessage());
-    }
-}
+$tratamentos = buscarTratamentosTraduzidos($pdo, $idioma);
 
 // Serviço em destaque: usa o primeiro da lista para dar visibilidade extra a um tratamento.
 // Podes trocar por outra lógica (ex: um id fixo) assim que tiveres um serviço "estrela".
@@ -24,10 +14,10 @@ require_once __DIR__ . '/includes/header.php';
 
 <section class="secao secao-pagina-topo">
     <div class="container">
-        <p class="eyebrow">O que oferecemos</p>
-        <h1>Os nossos serviços</h1>
+        <p class="eyebrow"><?= htmlspecialchars(t('servicos.topo.eyebrow')) ?></p>
+        <h1><?= htmlspecialchars(t('servicos.topo.titulo')) ?></h1>
         <p class="texto-lead" style="max-width:640px">
-            Especialidades e serviços clínicos pensados para acompanhar a sua saúde em todas as etapas da vida.
+            <?= htmlspecialchars(t('servicos.topo.texto')) ?>
         </p>
     </div>
 </section>
@@ -42,11 +32,11 @@ require_once __DIR__ . '/includes/header.php';
             </svg>
         </div>
         <div class="cartao-destaque-servico-texto">
-            <p class="cartao-destaque-servico-eyebrow">Serviço em destaque</p>
+            <p class="cartao-destaque-servico-eyebrow"><?= htmlspecialchars(t('servicos.destaque.eyebrow')) ?></p>
             <h2><?= htmlspecialchars($servicoDestaque['nome']) ?></h2>
             <p><?= htmlspecialchars($servicoDestaque['descricao'] ?? '') ?></p>
         </div>
-        <a href="contacto.php?tratamento=<?= (int)$servicoDestaque['id_tratamento'] ?>#agendamento" class="botao botao-branco">Marcar este serviço</a>
+        <a href="contacto.php?tratamento=<?= (int)$servicoDestaque['id_tratamento'] ?>#agendamento" class="botao botao-branco"><?= htmlspecialchars(t('servicos.destaque.botao')) ?></a>
     </div>
 </section>
 <?php endif; ?>
@@ -54,14 +44,14 @@ require_once __DIR__ . '/includes/header.php';
 <section class="secao secao-servicos">
     <div class="container">
         <?php if (empty($tratamentos)): ?>
-            <p>Ainda não existem serviços cadastrados. Volte brevemente.</p>
+            <p><?= htmlspecialchars(t('servicos.lista.vazio')) ?></p>
         <?php else: ?>
             <div class="barra-pesquisa-servicos">
                 <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <circle cx="11" cy="11" r="7"/>
                     <path d="m21 21-4.3-4.3"/>
                 </svg>
-                <input type="text" id="pesquisaServicos" placeholder="Pesquisar por nome ou especialidade..." aria-label="Pesquisar serviços">
+                <input type="text" id="pesquisaServicos" placeholder="<?= htmlspecialchars(t('servicos.pesquisa.placeholder')) ?>" aria-label="<?= htmlspecialchars(t('servicos.pesquisa.aria')) ?>">
             </div>
 
             <div class="grelha-servicos" id="grelhaServicos">
@@ -72,15 +62,15 @@ require_once __DIR__ . '/includes/header.php';
                         <h3><?= htmlspecialchars($tratamento['nome']) ?></h3>
                         <p><?= htmlspecialchars($tratamento['descricao'] ?? '') ?></p>
                         <?php if (!empty($tratamento['preco'])): ?>
-                            <p class="cartao-servico-preco">Desde <?= number_format((float)$tratamento['preco'], 2, ',', '.') ?> MT</p>
+                            <p class="cartao-servico-preco"><?= htmlspecialchars(t('servicos.cartao.desde')) ?> <?= number_format((float)$tratamento['preco'], 2, ',', '.') ?> MT</p>
                         <?php endif; ?>
-                        <a href="contacto.php?tratamento=<?= (int)$tratamento['id_tratamento'] ?>#agendamento" class="link-seta">Marcar consulta</a>
+                        <a href="contacto.php?tratamento=<?= (int)$tratamento['id_tratamento'] ?>#agendamento" class="link-seta"><?= htmlspecialchars(t('servicos.cartao.link')) ?></a>
                     </article>
                 <?php endforeach; ?>
             </div>
 
             <p class="mensagem-sem-resultados" id="mensagemSemResultados" hidden>
-                Nenhum serviço encontrado para essa pesquisa.
+                <?= htmlspecialchars(t('servicos.sem_resultados')) ?>
             </p>
         <?php endif; ?>
     </div>
@@ -89,27 +79,27 @@ require_once __DIR__ . '/includes/header.php';
 <section class="secao secao-faq">
     <div class="container">
         <div class="secao-cabecalho">
-            <p class="eyebrow">Dúvidas frequentes</p>
-            <h2>Perguntas sobre os nossos serviços</h2>
-            <p class="texto-lead">Não encontrou a resposta que procurava? Contacte-nos diretamente.</p>
+            <p class="eyebrow"><?= htmlspecialchars(t('servicos.faq.eyebrow')) ?></p>
+            <h2><?= htmlspecialchars(t('servicos.faq.titulo')) ?></h2>
+            <p class="texto-lead"><?= htmlspecialchars(t('servicos.faq.texto')) ?></p>
         </div>
 
         <div class="lista-faq">
             <details class="item-faq" open>
-                <summary>Preciso de marcação prévia para ser atendido?</summary>
-                <p>Recomendamos sempre marcar consulta com antecedência, para garantir o horário que melhor se adequa a si. Em casos urgentes, faça-nos contacto direto por telefone.</p>
+                <summary><?= htmlspecialchars(t('servicos.faq.p1_pergunta')) ?></summary>
+                <p><?= htmlspecialchars(t('servicos.faq.p1_resposta')) ?></p>
             </details>
             <details class="item-faq">
-                <summary>Os preços apresentados incluem tudo?</summary>
-                <p>Os valores indicados referem-se à consulta ou serviço em si. Exames complementares, se necessários, são orçamentados à parte pela nossa equipa.</p>
+                <summary><?= htmlspecialchars(t('servicos.faq.p2_pergunta')) ?></summary>
+                <p><?= htmlspecialchars(t('servicos.faq.p2_resposta')) ?></p>
             </details>
             <details class="item-faq">
-                <summary>Posso alterar ou cancelar uma marcação?</summary>
-                <p>Sim. Entre em contacto connosco com a maior antecedência possível para reagendarmos sem transtornos.</p>
+                <summary><?= htmlspecialchars(t('servicos.faq.p3_pergunta')) ?></summary>
+                <p><?= htmlspecialchars(t('servicos.faq.p3_resposta')) ?></p>
             </details>
             <details class="item-faq">
-                <summary>Atendem crianças e idosos?</summary>
-                <p>Sim, temos serviços dedicados a diferentes faixas etárias, incluindo pediatria e acompanhamento geriátrico.</p>
+                <summary><?= htmlspecialchars(t('servicos.faq.p4_pergunta')) ?></summary>
+                <p><?= htmlspecialchars(t('servicos.faq.p4_resposta')) ?></p>
             </details>
         </div>
     </div>

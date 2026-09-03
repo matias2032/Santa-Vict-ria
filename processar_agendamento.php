@@ -1,6 +1,7 @@
 <?php
 //processar_agendamento.php
 require_once __DIR__ . '/config/db.php';
+require_once __DIR__ . '/config/idioma.php';
 require_once __DIR__ . '/mailer.php';
 
 // Só aceita pedidos vindos do formulário (POST)
@@ -58,20 +59,18 @@ try {
 
     $pdo->commit();
 
-    // Busca dados detalhados (nome + preço) dos serviços selecionados
-    $servicosSelecionados = [];
-    if (!empty($idTratamentos)) {
-        $inQuery = implode(',', array_fill(0, count($idTratamentos), '?'));
-        $stmtTrat = $pdo->prepare("SELECT nome, preco FROM tratamentos WHERE id_tratamento IN ($inQuery)");
-        $stmtTrat->execute($idTratamentos);
-        $servicosSelecionados = $stmtTrat->fetchAll(PDO::FETCH_ASSOC);
-    }
+    // Busca dados detalhados (nome + preço) dos serviços selecionados.
+    // O e-mail ao cliente sai no idioma que ele escolheu no site ($idioma,
+    // detetado em config/idioma.php). A notificação interna da clínica
+    // é sempre em português, por isso busca-se uma segunda vez fixa em 'pt'.
+    $servicosCliente = buscarTratamentosPorIds($pdo, $idioma, $idTratamentos);
+    $servicosClinica = buscarTratamentosPorIds($pdo, 'pt', $idTratamentos);
 
 // 2. Envia e-mail de confirmação ao cliente via SMTP (PHPMailer) e regista o resultado
-    $assuntoCliente = 'Recebemos o seu pedido de agendamento - Centro Médico Santa Victória';
+    $assuntoCliente = t('email.cliente.assunto');
     $erroCliente = null;
     try {
-        $sucessoCliente = sendAutoReply($emailCliente, $nomeCliente, $servicosSelecionados, 'pt');
+        $sucessoCliente = sendAutoReply($emailCliente, $nomeCliente, $servicosCliente, $idioma);
     } catch (\Throwable $e) {
         $sucessoCliente = false;
         $erroCliente = $e->getMessage();
@@ -84,7 +83,7 @@ try {
     $erroClinica = null;
     try {
         $sucessoClinica = sendClinicNotification(
-            $servicosSelecionados,
+            $servicosClinica,
             $nomeCliente,
             $emailCliente,
             $telefone,

@@ -2,17 +2,50 @@
 // Widget de cabeçalho - incluído em todas as páginas.
 // Uso: include 'includes/header.php';  (a partir da raiz do site)
 
+require_once __DIR__ . '/../config/idioma.php';
+
 $paginaAtual = basename($_SERVER['PHP_SELF']);
 
 function navAtivo(string $pagina, string $atual): string {
     return $pagina === $atual ? 'nav-link ativo' : 'nav-link';
 }
+
+/**
+ * Constrói o URL da página atual trocando (ou definindo) o parâmetro ?lang=,
+ * preservando os restantes parâmetros GET já existentes (ex: ?tratamento=3).
+ * Não preserva o fragmento (#agendamento) — limitação aceitável para o toggle.
+ */
+function urlComIdioma(string $idiomaAlvo, string $paginaAtual): string {
+    $params = $_GET;
+    $params['lang'] = $idiomaAlvo;
+    return $paginaAtual . '?' . http_build_query($params);
+}
 ?>
 <!DOCTYPE html>
-<html lang="pt-mz">
+<html lang="<?= htmlspecialchars($idioma) ?>">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!--
+    Script anti-flash: aplica o tema guardado (ou a preferência do sistema)
+    ANTES do CSS carregar, para evitar o "flash" de tema claro seguido de
+    troca brusca para escuro. Tem de correr de forma síncrona, aqui no <head>,
+    antes do <link rel="stylesheet">.
+-->
+<script>
+(function () {
+    try {
+        var guardado = localStorage.getItem('tema');
+        var prefereEscuro = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        var tema = guardado || (prefereEscuro ? 'escuro' : 'claro');
+        document.documentElement.setAttribute('data-tema', tema);
+    } catch (e) {
+        // localStorage indisponível (modo privado restrito, etc.) — mantém o tema claro por omissão.
+    }
+})();
+</script>
+
 <title><?= isset($tituloPagina) ? htmlspecialchars($tituloPagina) . ' | Centro Médico Santa Victória' : 'Centro Médico Santa Victória' ?></title>
 <meta name="description" content="Centro Médico Santa Victória - cuidados de saúde de confiança, com uma equipa dedicada ao seu bem-estar.">
 <link rel="icon" href="assets/images/logo.png" type="image/png">
@@ -23,7 +56,7 @@ function navAtivo(string $pagina, string $atual): string {
 </head>
 <body>
 
-<a href="#conteudo" class="pular-link">Saltar para o conteúdo</a>
+<a href="#conteudo" class="pular-link"><?= t('nav.saltar') ?></a>
 
 <header class="cabecalho" id="cabecalho">
     <div class="cabecalho-interno">
@@ -32,19 +65,72 @@ function navAtivo(string $pagina, string $atual): string {
         </a>
 
         <nav class="navegacao" id="navegacao">
-            <a href="index.php" class="<?= navAtivo('index.php', $paginaAtual) ?>">Início</a>
-            <a href="sobre.php" class="<?= navAtivo('sobre.php', $paginaAtual) ?>">Sobre Nós</a>
-            <a href="servicos.php" class="<?= navAtivo('servicos.php', $paginaAtual) ?>">Serviços</a>
-            <a href="galeria.php" class="<?= navAtivo('galeria.php', $paginaAtual) ?>">Galeria</a>
-            <a href="contacto.php" class="<?= navAtivo('contacto.php', $paginaAtual) ?>">Contacte-nos</a>
+            <a href="index.php" class="<?= navAtivo('index.php', $paginaAtual) ?>"><?= t('nav.inicio') ?></a>
+            <a href="sobre.php" class="<?= navAtivo('sobre.php', $paginaAtual) ?>"><?= t('nav.sobre') ?></a>
+            <a href="servicos.php" class="<?= navAtivo('servicos.php', $paginaAtual) ?>"><?= t('nav.servicos') ?></a>
+            <a href="galeria.php" class="<?= navAtivo('galeria.php', $paginaAtual) ?>"><?= t('nav.galeria') ?></a>
+            <a href="contacto.php" class="<?= navAtivo('contacto.php', $paginaAtual) ?>"><?= t('nav.contacto') ?></a>
         </nav>
 
-        <a href="contacto.php#agendamento" class="botao botao-primario botao-cabecalho">Marcar consulta</a>
+        <div class="acoes-cabecalho">
+            <div class="seletor-idioma" role="group" aria-label="<?= htmlspecialchars(t('nav.selecionar_idioma')) ?>">
+                <a href="<?= htmlspecialchars(urlComIdioma('pt', $paginaAtual)) ?>"
+                   class="seletor-idioma-link<?= $idioma === 'pt' ? ' ativo' : '' ?>"
+                   <?= $idioma === 'pt' ? 'aria-current="true"' : '' ?>>PT</a>
+                <span class="seletor-idioma-separador" aria-hidden="true">|</span>
+                <a href="<?= htmlspecialchars(urlComIdioma('en', $paginaAtual)) ?>"
+                   class="seletor-idioma-link<?= $idioma === 'en' ? ' ativo' : '' ?>"
+                   <?= $idioma === 'en' ? 'aria-current="true"' : '' ?>>EN</a>
+            </div>
 
-        <button class="menu-alterna" id="menuAlterna" aria-label="Abrir menu" aria-expanded="false" aria-controls="navegacao">
+            <button type="button" class="alternar-tema" id="alternarTema"
+                    aria-pressed="false"
+                    aria-label="<?= htmlspecialchars(t('nav.modo_escuro')) ?>"
+                    data-label-claro="<?= htmlspecialchars(t('nav.modo_claro')) ?>"
+                    data-label-escuro="<?= htmlspecialchars(t('nav.modo_escuro')) ?>">
+                <svg class="icone-sol" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="4"/>
+                    <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66 4.93 19.07M19.07 4.93l-1.41 1.41"/>
+                </svg>
+                <svg class="icone-lua" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                </svg>
+            </button>
+        </div>
+
+        <a href="contacto.php#agendamento" class="botao botao-primario botao-cabecalho"><?= t('nav.marcar') ?></a>
+
+        <button class="menu-alterna" id="menuAlterna" aria-label="<?= t('nav.abrir_menu') ?>" aria-expanded="false" aria-controls="navegacao">
             <span></span><span></span><span></span>
         </button>
     </div>
 </header>
+
+<script>
+(function () {
+    var btn = document.getElementById('alternarTema');
+    if (!btn) return;
+
+    function aplicarEstadoBotao(tema) {
+        var escuro = tema === 'escuro';
+        btn.setAttribute('aria-pressed', escuro ? 'true' : 'false');
+        btn.setAttribute('aria-label', escuro ? btn.dataset.labelClaro : btn.dataset.labelEscuro);
+    }
+
+    aplicarEstadoBotao(document.documentElement.getAttribute('data-tema') || 'claro');
+
+    btn.addEventListener('click', function () {
+        var atual = document.documentElement.getAttribute('data-tema') || 'claro';
+        var novo = atual === 'escuro' ? 'claro' : 'escuro';
+        document.documentElement.setAttribute('data-tema', novo);
+        try {
+            localStorage.setItem('tema', novo);
+        } catch (e) {
+            // localStorage indisponível — o tema ainda muda visualmente, só não persiste.
+        }
+        aplicarEstadoBotao(novo);
+    });
+})();
+</script>
 
 <main id="conteudo">

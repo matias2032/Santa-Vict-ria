@@ -1,17 +1,11 @@
 <!-- contacto.php -->
 <?php
 require_once __DIR__ . '/config/db.php';
-$tituloPagina = 'Contacto';
+require_once __DIR__ . '/config/idioma.php';
+$tituloPagina = t('contacto.titulo_pagina');
 
 // Lista de tratamentos para o formulário (inclui preço)
-$tratamentos = [];
-if ($pdo) {
-    try {
-        $tratamentos = $pdo->query("SELECT id_tratamento, nome, preco FROM tratamentos WHERE ativo = 1 ORDER BY nome ASC")->fetchAll();
-    } catch (PDOException $e) {
-        error_log('Erro ao carregar tratamentos: ' . $e->getMessage());
-    }
-}
+$tratamentos = buscarTratamentosTraduzidos($pdo, $idioma);
 
 // Estado vindo do processar_agendamento.php (via redirect com querystring)
 $estado = $_GET['estado'] ?? null; // 'sucesso' ou 'erro'
@@ -25,10 +19,10 @@ require_once __DIR__ . '/includes/header.php';
 
 <section class="secao secao-pagina-topo">
     <div class="container">
-        <p class="eyebrow">Contacto</p>
-        <h1>Fale connosco</h1>
+        <p class="eyebrow"><?= htmlspecialchars(t('contacto.topo.eyebrow')) ?></p>
+        <h1><?= htmlspecialchars(t('contacto.topo.titulo')) ?></h1>
         <p class="texto-lead" style="max-width:640px">
-            Marque a sua consulta ou tire dúvidas. A nossa equipa responde o mais rápido possível.
+            <?= htmlspecialchars(t('contacto.topo.texto')) ?>
         </p>
     </div>
 </section>
@@ -36,35 +30,35 @@ require_once __DIR__ . '/includes/header.php';
 <section class="secao" id="agendamento">
     <div class="container grelha-contacto">
         <div>
-            <h2>Informações de contacto</h2>
+            <h2><?= htmlspecialchars(t('contacto.info.titulo')) ?></h2>
 
             <div class="info-contacto-item">
-                <h3>Morada</h3>
-                <p>Cidade de Tete, Moçambique</p>
+                <h3><?= htmlspecialchars(t('contacto.info.morada_titulo')) ?></h3>
+                <p><?= htmlspecialchars(t('contacto.info.morada_texto')) ?></p>
             </div>
             <div class="info-contacto-item">
-                <h3>Telefone</h3>
+                <h3><?= htmlspecialchars(t('contacto.info.telefone_titulo')) ?></h3>
                 <a href="+258870000345" target="_blank">+258 87 000 0345</a> ou <a href="+258852824765" target="_blank">+258 85 282 4765</a>
             </div>
             <div class="info-contacto-item">
-                <h3>E-mail</h3>
+                <h3><?= htmlspecialchars(t('contacto.info.email_titulo')) ?></h3>
 
                 <a href="https://mail.google.com/mail/?view=cm&fs=1&to=info@stecheng.co.mz&su=Contato%20via%20site" target="_blank">info@cmsv.co.mz</a>
             </div>
             <div class="info-contacto-item">
-                <h3>Horário</h3>
-                <p>Segunda a Domingo: 07h00 ás 22:00 <span class="badge-horario" id="badgeHorario" hidden></span></p>
+                <h3><?= htmlspecialchars(t('contacto.info.horario_titulo')) ?></h3>
+                <p><?= htmlspecialchars(t('footer.horario')) ?> <span class="badge-horario" id="badgeHorario" hidden></span></p>
             </div>
         </div>
 
         <div>
             <?php if ($estado === 'sucesso'): ?>
                 <div class="mensagem-estado mensagem-sucesso" id="mensagemEstado">
-                    O seu pedido de agendamento foi recebido. Entraremos em contacto para confirmar.
+                    <?= htmlspecialchars(t('contacto.mensagem.sucesso')) ?>
                 </div>
             <?php elseif ($estado === 'erro'): ?>
                 <div class="mensagem-estado mensagem-erro" id="mensagemEstado">
-                    Não foi possível enviar o seu pedido. Por favor tente novamente ou contacte-nos por telefone.
+                    <?= htmlspecialchars(t('contacto.mensagem.erro')) ?>
                 </div>
             <?php endif; ?>
 
@@ -90,30 +84,30 @@ require_once __DIR__ . '/includes/header.php';
             <form class="formulario" action="processar_agendamento.php" method="POST">
                 <div class="campo-linha">
                     <div class="campo">
-                        <label for="nome_cliente">Nome completo</label>
+                        <label for="nome_cliente"><?= htmlspecialchars(t('contacto.form.nome_label')) ?></label>
                         <input type="text" id="nome_cliente" name="nome_cliente" required>
                     </div>
                     <div class="campo">
-                        <label for="telefone_cliente">Telefone</label>
+                        <label for="telefone_cliente"><?= htmlspecialchars(t('contacto.form.telefone_label')) ?></label>
                         <input type="tel" id="telefone_cliente" name="telefone_cliente">
                     </div>
                 </div>
 
                 <div class="campo">
-                    <label for="email_cliente">E-mail</label>
+                    <label for="email_cliente"><?= htmlspecialchars(t('contacto.form.email_label')) ?></label>
                     <input type="email" id="email_cliente" name="email_cliente" required>
                 </div>
 
                 <div class="campo">
-                    <label for="data_preferencial">Data preferencial</label>
+                    <label for="data_preferencial"><?= htmlspecialchars(t('contacto.form.data_label')) ?></label>
                     <input type="date" id="data_preferencial" name="data_preferencial">
                 </div>
 
                 <div class="campo">
-                    <label for="buscar_servico">Serviços pretendidos (pode escolher mais de um)</label>
-                    
+                    <label for="buscar_servico"><?= htmlspecialchars(t('contacto.form.servicos_label')) ?></label>
+
                     <!-- Campo de Pesquisa em Tempo Real -->
-                    <input type="text" id="buscar_servico" placeholder="Pesquisar serviço..." style="margin-bottom: 10px;">
+                    <input type="text" id="buscar_servico" placeholder="<?= htmlspecialchars(t('contacto.form.buscar_placeholder')) ?>" style="margin-bottom: 10px;">
 
                     <!-- Contêiner com Rolagem Vertical e Contador -->
                     <div class="caixa-servicos-scroll">
@@ -130,17 +124,17 @@ require_once __DIR__ . '/includes/header.php';
                         </div>
                     </div>
                     <div class="chips-servicos-selecionados" id="chipsServicos"></div>
-                    <span class="resumo-selecao" id="resumoSelecao">0 serviço(s) selecionado(s)</span>
+                    <span class="resumo-selecao" id="resumoSelecao">0 <?= htmlspecialchars(t('contacto.form.resumo_selecionado')) ?></span>
                 </div>
 
 
 
                 <div class="campo">
-                    <label for="mensagem">Mensagem</label>
-                    <textarea id="mensagem" name="mensagem" placeholder="Conte-nos um pouco sobre o que precisa..."></textarea>
+                    <label for="mensagem"><?= htmlspecialchars(t('contacto.form.mensagem_label')) ?></label>
+                    <textarea id="mensagem" name="mensagem" placeholder="<?= htmlspecialchars(t('contacto.form.mensagem_placeholder')) ?>"></textarea>
                 </div>
 
-                <button type="submit" class="botao botao-primario">Enviar pedido de agendamento</button>
+                <button type="submit" class="botao botao-primario"><?= htmlspecialchars(t('contacto.form.botao_enviar')) ?></button>
             </form>
         </div>
     </div>
@@ -149,27 +143,27 @@ require_once __DIR__ . '/includes/header.php';
 <section class="secao secao-faq">
     <div class="container">
         <div class="secao-cabecalho">
-            <p class="eyebrow">Dúvidas frequentes</p>
-            <h2>Perguntas sobre o agendamento de consulta</h2>
-            <p class="texto-lead">Não encontrou a resposta que procurava? Contacte-nos directamente.</p>
+            <p class="eyebrow"><?= htmlspecialchars(t('contacto.faq.eyebrow')) ?></p>
+            <h2><?= htmlspecialchars(t('contacto.faq.titulo')) ?></h2>
+            <p class="texto-lead"><?= htmlspecialchars(t('contacto.faq.texto')) ?></p>
         </div>
 
         <div class="lista-faq">
             <details class="item-faq" open>
-                <summary>Preciso de confirmar a marcação depois de enviar o formulário?</summary>
-                <p>Sim. Após recebermos o seu pedido, a nossa equipa entra em contacto para confirmar data e hora definitivas.</p>
+                <summary><?= htmlspecialchars(t('contacto.faq.p1_pergunta')) ?></summary>
+                <p><?= htmlspecialchars(t('contacto.faq.p1_resposta')) ?></p>
             </details>
             <details class="item-faq">
-                <summary>Posso escolher mais de um serviço na mesma marcação?</summary>
-                <p>Sim, pode selecionar quantos serviços precisar na lista acima; todos ficam associados ao mesmo pedido de agendamento.</p>
+                <summary><?= htmlspecialchars(t('contacto.faq.p2_pergunta')) ?></summary>
+                <p><?= htmlspecialchars(t('contacto.faq.p2_resposta')) ?></p>
             </details>
             <details class="item-faq">
-                <summary>Qual é o horário de atendimento?</summary>
-                <p>Atendemos todos os dias, das 07h00 às 22h00, incluindo fins de semana e feriados.</p>
+                <summary><?= htmlspecialchars(t('contacto.faq.p3_pergunta')) ?></summary>
+                <p><?= htmlspecialchars(t('contacto.faq.p3_resposta')) ?></p>
             </details>
             <details class="item-faq">
-                <summary>Não recebi alguma resposta ao meu pedido, o que faço?</summary>
-                <p>Se não tiver notícias nossas em algumas horas, contacte-nos directamente por telefone para agilizar o atendimento.</p>
+                <summary><?= htmlspecialchars(t('contacto.faq.p4_pergunta')) ?></summary>
+                <p><?= htmlspecialchars(t('contacto.faq.p4_resposta')) ?></p>
             </details>
         </div>
     </div>
@@ -177,6 +171,10 @@ require_once __DIR__ . '/includes/header.php';
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
+    // Textos traduzidos, injetados pelo PHP (esta secção corre server-side via contacto.php)
+    const textoResumoSelecao = <?= json_encode(t('contacto.form.resumo_selecionado')) ?>;
+    const textoRemoverAria = <?= json_encode(t('contacto.form.remover_aria')) ?>;
+
     const inputBusca = document.getElementById('buscar_servico');
     const itens = document.querySelectorAll('.item-servico-checkbox');
     const resumo = document.getElementById('resumoSelecao');
@@ -200,7 +198,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function atualizarContador() {
         const marcados = document.querySelectorAll('.item-servico-checkbox input[type="checkbox"]:checked');
-        resumo.textContent = marcados.length + ' serviço(s) selecionado(s)';
+        resumo.textContent = textoResumoSelecao.replace('%d', marcados.length);
 
         chipsContainer.innerHTML = '';
         marcados.forEach((cb) => {
@@ -208,7 +206,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
             const chip = document.createElement('span');
             chip.className = 'chip-servico';
-            chip.innerHTML = '<span>' + nome + '</span><button type="button" class="chip-servico-remover" aria-label="Remover ' + nome + '">&times;</button>';
+            const ariaRemover = textoRemoverAria.replace('%s', nome);
+            chip.innerHTML = '<span>' + nome + '</span><button type="button" class="chip-servico-remover" aria-label="' + ariaRemover + '">&times;</button>';
 
             chip.querySelector('.chip-servico-remover').addEventListener('click', function () {
                 cb.checked = false;

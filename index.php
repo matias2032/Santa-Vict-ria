@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/config/db.php';
+require_once __DIR__ . '/config/idioma.php';
 
 $tituloPagina = 'Início';
 
@@ -30,29 +31,17 @@ if (empty($imagensHero)) {
  * SERVIÇOS (tabela: tratamentos)
  * Mostra só os tratamentos ativos, limitados a 6 na página inicial.
  */
-$tratamentos = [];
-if ($pdo) {
-    try {
-        $stmt = $pdo->query("SELECT id_tratamento, nome, descricao, preco 
-                              FROM tratamentos 
-                              WHERE ativo = 1 
-                              ORDER BY criado_em DESC 
-                              LIMIT 6");
-        $tratamentos = $stmt->fetchAll();
-    } catch (PDOException $e) {
-        error_log('Erro ao carregar tratamentos: ' . $e->getMessage());
-    }
-}
+$tratamentos = buscarTratamentosTraduzidos($pdo, $idioma, ['preco'], 'criado_em', 'DESC', 6);
 
 // Conteúdo de reserva, caso a tabela ainda esteja vazia ou a BD esteja em baixo.
 if (empty($tratamentos)) {
     $tratamentos = [
-        ['nome' => 'Consulta Geral', 'descricao' => 'Avaliação clínica completa com médico de clínica geral.', 'preco' => null],
-        ['nome' => 'Pediatria', 'descricao' => 'Acompanhamento de saúde para crianças e recém-nascidos.', 'preco' => null],
-        ['nome' => 'Ginecologia', 'descricao' => 'Consultas e exames de saúde da mulher.', 'preco' => null],
-        ['nome' => 'Análises Clínicas', 'descricao' => 'Recolha e processamento de exames laboratoriais.', 'preco' => null],
-        ['nome' => 'Ecografia', 'descricao' => 'Exames de imagem para diagnóstico rápido e preciso.', 'preco' => null],
-        ['nome' => 'Odontologia', 'descricao' => 'Cuidados dentários preventivos e curativos.', 'preco' => null],
+        ['nome' => t('index.fallback.consulta_geral.nome'), 'descricao' => t('index.fallback.consulta_geral.descricao'), 'preco' => null],
+        ['nome' => t('index.fallback.pediatria.nome'), 'descricao' => t('index.fallback.pediatria.descricao'), 'preco' => null],
+        ['nome' => t('index.fallback.ginecologia.nome'), 'descricao' => t('index.fallback.ginecologia.descricao'), 'preco' => null],
+        ['nome' => t('index.fallback.analises.nome'), 'descricao' => t('index.fallback.analises.descricao'), 'preco' => null],
+        ['nome' => t('index.fallback.ecografia.nome'), 'descricao' => t('index.fallback.ecografia.descricao'), 'preco' => null],
+        ['nome' => t('index.fallback.odontologia.nome'), 'descricao' => t('index.fallback.odontologia.descricao'), 'preco' => null],
     ];
 }
 
@@ -102,11 +91,10 @@ require_once __DIR__ . '/includes/header.php';
     </div>
 
     <div class="hero-conteudo">
-        <p class="hero-eyebrow">Centro Médico Santa Victória</p>
-        <h1 class="hero-titulo">Cuidar de si é <span>o nosso compromisso</span></h1>
+        <p class="hero-eyebrow"><?= t('index.hero.marca') ?></p>
+        <h1 class="hero-titulo"><?= t('index.hero.titulo_1') ?> <span><?= t('index.hero.titulo_2') ?></span></h1>
         <p class="hero-texto">
-            Uma equipa médica dedicada, atendimento humano e tecnologia ao serviço da sua saúde,
-            aqui na Cidade de Tete.
+            <?= t('index.hero.texto') ?>
         </p>
         <!-- <div class="hero-acoes">
             <a href="contacto.php#agendamento" class="botao botao-primario">Marcar consulta</a>
@@ -117,7 +105,7 @@ require_once __DIR__ . '/includes/header.php';
     <?php if (count($imagensHero) > 1): ?>
     <div class="hero-marcadores" id="heroMarcadores">
         <?php foreach ($imagensHero as $i => $imagem): ?>
-            <button class="hero-marcador <?= $i === 0 ? 'ativo' : '' ?>" data-slide="<?= $i ?>" aria-label="Foto <?= $i + 1 ?>"></button>
+            <button class="hero-marcador <?= $i === 0 ? 'ativo' : '' ?>" data-slide="<?= $i ?>" aria-label="<?= t('index.hero.foto_alt') ?> <?= $i + 1 ?>"></button>
         <?php endforeach; ?>
     </div>
     <?php endif; ?>
@@ -127,19 +115,19 @@ require_once __DIR__ . '/includes/header.php';
     <div class="container faixa-estatisticas-grelha">
         <div class="estatistica">
             <p class="estatistica-numero" data-contador data-alvo="10" data-prefixo="+">0</p>
-            <p class="estatistica-legenda">Anos de experiência</p>
+            <p class="estatistica-legenda"><?= t('index.estatisticas.anos') ?></p>
         </div>
         <div class="estatistica">
             <p class="estatistica-numero" data-contador data-alvo="50" data-prefixo="+">0</p>
-            <p class="estatistica-legenda">Especialidades e serviços</p>
+            <p class="estatistica-legenda"><?= t('index.estatisticas.especialidades') ?></p>
         </div>
         <div class="estatistica">
             <p class="estatistica-numero" data-contador data-alvo="5000" data-prefixo="+">0</p>
-            <p class="estatistica-legenda">Pacientes atendidos</p>
+            <p class="estatistica-legenda"><?= t('index.estatisticas.pacientes') ?></p>
         </div>
         <div class="estatistica">
             <p class="estatistica-numero">24/7</p>
-            <p class="estatistica-legenda">Disponibilidade para urgências</p>
+            <p class="estatistica-legenda"><?= t('index.estatisticas.urgencias') ?></p>
         </div>
     </div>
 </section>
@@ -147,27 +135,25 @@ require_once __DIR__ . '/includes/header.php';
 <section class="secao secao-sobre-resumo">
     <div class="container grelha-2">
         <div>
-            <p class="eyebrow">Sobre nós</p>
-            <h2>Saúde de confiança, perto de si</h2>
+            <p class="eyebrow"><?= t('index.sobre.eyebrow') ?></p>
+            <h2><?= t('index.sobre.titulo') ?></h2>
             <p class="texto-lead">
-                Há anos ao serviço da comunidade de Tete, o Centro Médico Santa Victória reúne uma equipa
-                de profissionais dedicados e infraestrutura adequada para acompanhar a sua saúde e a da sua família,
-                com rigor clínico e proximidade humana.
+                <?= t('index.sobre.texto') ?>
             </p>
             <ul class="lista-check">
-                <li>Equipa médica qualificada e atenta</li>
-                <li>Marcação de consultas simples e rápida</li>
-                <li>Acompanhamento próximo em cada etapa</li>
+                <li><?= t('index.sobre.item_1') ?></li>
+                <li><?= t('index.sobre.item_2') ?></li>
+                <li><?= t('index.sobre.item_3') ?></li>
             </ul>
-            <a href="sobre.php" class="link-seta">Conhecer a nossa história</a>
+            <a href="sobre.php" class="link-seta"><?= t('index.sobre.link') ?></a>
         </div>
         <div class="cartao-destaque">
-            <p class="cartao-destaque-eyebrow">Precisa de ajuda agora?</p>
-            <h3 class="cartao-destaque-titulo">Fale com a nossa equipa</h3>
-            <p class="cartao-destaque-texto">Estamos disponíveis por telefone, WhatsApp ou presencialmente, todos os dias da semana.</p>
+            <p class="cartao-destaque-eyebrow"><?= t('index.cartao.eyebrow') ?></p>
+            <h3 class="cartao-destaque-titulo"><?= t('index.cartao.titulo') ?></h3>
+            <p class="cartao-destaque-texto"><?= t('index.cartao.texto') ?></p>
             <div class="cartao-destaque-linha"></div>
             <a href="tel:+258870000345" class="cartao-destaque-contacto">+258 87 000 0345</a>
-            <a href="contacto.php#agendamento" class="botao botao-branco cartao-destaque-botao">Marcar consulta</a>
+            <a href="contacto.php#agendamento" class="botao botao-branco cartao-destaque-botao"><?= t('index.cartao.botao') ?></a>
         </div>
     </div>
 </section>
@@ -175,9 +161,9 @@ require_once __DIR__ . '/includes/header.php';
 <section class="secao secao-servicos" id="servicos">
     <div class="container">
         <div class="secao-cabecalho">
-            <p class="eyebrow">O que oferecemos</p>
-            <h2>Os nossos serviços</h2>
-            <p class="texto-lead">Um conjunto de especialidades pensado para cuidar de si em cada fase da vida.</p>
+            <p class="eyebrow"><?= t('index.servicos.eyebrow') ?></p>
+            <h2><?= t('index.servicos.titulo') ?></h2>
+            <p class="texto-lead"><?= t('index.servicos.texto') ?></p>
         </div>
 
         <div class="grelha-servicos">
@@ -186,14 +172,14 @@ require_once __DIR__ . '/includes/header.php';
                     <h3><?= htmlspecialchars($tratamento['nome']) ?></h3>
                     <p><?= htmlspecialchars($tratamento['descricao'] ?? '') ?></p>
                     <?php if (!empty($tratamento['preco'])): ?>
-                        <p class="cartao-servico-preco">Desde <?= number_format((float)$tratamento['preco'], 2, ',', '.') ?> MT</p>
+                        <p class="cartao-servico-preco"><?= t('index.servicos.desde') ?> <?= number_format((float)$tratamento['preco'], 2, ',', '.') ?> MT</p>
                     <?php endif; ?>
                 </article>
             <?php endforeach; ?>
         </div>
 
         <div class="secao-acao">
-            <a href="servicos.php" class="botao botao-primario">Ver todos os serviços</a>
+            <a href="servicos.php" class="botao botao-primario"><?= t('index.servicos.botao') ?></a>
         </div>
     </div>
 </section>
@@ -201,31 +187,31 @@ require_once __DIR__ . '/includes/header.php';
 <section class="secao secao-processo">
     <div class="container">
         <div class="secao-cabecalho">
-            <p class="eyebrow">Como funciona</p>
-            <h2>Um processo simples, claro e profissional</h2>
-            <p class="texto-lead">Acompanhamos cada passo, desde o primeiro contacto até ao acompanhamento pós-consulta.</p>
+            <p class="eyebrow"><?= t('index.processo.eyebrow') ?></p>
+            <h2><?= t('index.processo.titulo') ?></h2>
+            <p class="texto-lead"><?= t('index.processo.texto') ?></p>
         </div>
 
         <div class="grelha-processo">
             <div class="passo-processo">
                 <span class="passo-numero">01</span>
-                <h3>Contacto</h3>
-                <p>Marque a sua consulta por telefone, WhatsApp ou através do nosso formulário online.</p>
+                <h3><?= t('index.processo.p1_titulo') ?></h3>
+                <p><?= t('index.processo.p1_texto') ?></p>
             </div>
             <div class="passo-processo">
                 <span class="passo-numero">02</span>
-                <h3>Triagem</h3>
-                <p>A nossa equipa confirma a data e prepara tudo para o receber com o cuidado necessário.</p>
+                <h3><?= t('index.processo.p2_titulo') ?></h3>
+                <p><?= t('index.processo.p2_texto') ?></p>
             </div>
             <div class="passo-processo">
                 <span class="passo-numero">03</span>
-                <h3>Consulta</h3>
-                <p>É atendido por um profissional qualificado, com atenção total ao seu caso.</p>
+                <h3><?= t('index.processo.p3_titulo') ?></h3>
+                <p><?= t('index.processo.p3_texto') ?></p>
             </div>
             <div class="passo-processo">
                 <span class="passo-numero">04</span>
-                <h3>Acompanhamento</h3>
-                <p>Mantemos o acompanhamento necessário após a consulta, sempre que aplicável.</p>
+                <h3><?= t('index.processo.p4_titulo') ?></h3>
+                <p><?= t('index.processo.p4_texto') ?></p>
             </div>
         </div>
     </div>
@@ -235,9 +221,9 @@ require_once __DIR__ . '/includes/header.php';
 <section class="secao secao-equipe">
     <div class="container">
         <div class="secao-cabecalho">
-            <p class="eyebrow">A nossa equipa</p>
-            <h2>Quem cuida de si</h2>
-            <p class="texto-lead">Profissionais dedicados, prontos para acompanhar a sua saúde com atenção e proximidade.</p>
+            <p class="eyebrow"><?= t('index.equipe.eyebrow') ?></p>
+            <h2><?= t('index.equipe.titulo') ?></h2>
+            <p class="texto-lead"><?= t('index.equipe.texto') ?></p>
         </div>
 
         <div class="grelha-galeria">
@@ -253,7 +239,7 @@ require_once __DIR__ . '/includes/header.php';
         </div>
 
         <div class="secao-acao">
-            <a href="sobre.php#equipe" class="botao botao-primario">Conhecer toda a equipa</a>
+            <a href="sobre.php#equipe" class="botao botao-primario"><?= t('index.equipe.botao') ?></a>
         </div>
     </div>
 </section>
@@ -264,16 +250,16 @@ require_once __DIR__ . '/includes/header.php';
     <div class="container">
         <div class="secao-cabecalho-flex">
             <div>
-                <p class="eyebrow">Instalações</p>
-                <h2>Conheça os nossos espaços</h2>
+                <p class="eyebrow"><?= t('index.galeria.eyebrow') ?></p>
+                <h2><?= t('index.galeria.titulo') ?></h2>
             </div>
-            <a href="galeria.php" class="link-seta">Ver galeria completa</a>
+            <a href="galeria.php" class="link-seta"><?= t('index.galeria.link') ?></a>
         </div>
 
         <div class="grelha-galeria grelha-galeria-preview">
             <?php foreach ($galeriaDestaque as $imagem): ?>
                 <div class="galeria-item">
-                    <img src="<?= htmlspecialchars($imagem) ?>" alt="Instalações do Centro Médico Santa Victória" loading="lazy">
+                    <img src="<?= htmlspecialchars($imagem) ?>" alt="<?= t('index.galeria.foto_alt') ?>" loading="lazy">
                 </div>
             <?php endforeach; ?>
         </div>
@@ -329,10 +315,10 @@ require_once __DIR__ . '/includes/header.php';
 <section class="secao secao-cta">
     <div class="container secao-cta-interno">
         <div>
-            <h2>Pronto para cuidar da sua saúde?</h2>
-            <p>Marque a sua consulta em poucos minutos e a nossa equipa entra em contacto para confirmar.</p>
+            <h2><?= t('index.cta.titulo') ?></h2>
+            <p><?= t('index.cta.texto') ?></p>
         </div>
-        <a href="contacto.php#agendamento" class="botao botao-branco">Marcar consulta</a>
+        <a href="contacto.php#agendamento" class="botao botao-branco"><?= t('index.cta.botao') ?></a>
     </div>
 </section>
 
