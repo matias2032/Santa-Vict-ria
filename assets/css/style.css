@@ -18,8 +18,8 @@
     --gradiente-marca: linear-gradient(115deg, var(--azul-profundo) 0%, var(--roxo) 55%, var(--magenta) 100%);
     --gradiente-suave: linear-gradient(135deg, rgba(28,42,109,0.92) 0%, rgba(114,56,214,0.85) 55%, rgba(194,43,179,0.85) 100%);
 
-    --fonte-titulo: 'Merriweather', Georgia, serif;
-    --fonte-corpo: 'Nunito Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --fonte-titulo: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+    --fonte-corpo: 'Figtree', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 
     --raio: 14px;
     --sombra: 0 20px 45px -25px rgba(28, 42, 109, 0.45);
