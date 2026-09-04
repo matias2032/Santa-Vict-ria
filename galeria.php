@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/config/idioma.php';
+require_once __DIR__ . '/config/categorias_galeria.php';
 $tituloPagina = t('galeria.titulo_pagina');
 
 $pastaGaleria = __DIR__ . '/assets/images/galeria';
@@ -25,7 +26,7 @@ if (is_dir($pastaGaleria)) {
 
         $nomeBase = pathinfo($ficheiro, PATHINFO_FILENAME);
         $partes = explode('--', $nomeBase, 2);
-        $categoria = count($partes) > 1 ? ucwords(str_replace(['-', '_'], ' ', $partes[0])) : t('galeria.categoria_geral');
+        $categoria = count($partes) > 1 ? traduzirCategoriaGaleria($partes[0]) : t('galeria.categoria_geral');
 
         $imagens[] = [
             'caminho'   => 'assets/images/galeria/' . $ficheiro,

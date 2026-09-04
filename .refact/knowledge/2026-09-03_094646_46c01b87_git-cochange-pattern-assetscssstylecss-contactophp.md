@@ -6,7 +6,7 @@ tags:
 - git
 - pattern
 created: 2026-09-03
-updated: 2026-09-03
+updated: 2026-09-04
 filenames:
 - assets/css/style.css
 - contacto.php
@@ -15,7 +15,7 @@ kind: pattern
 status: proposed
 superseded_by: null
 deprecated_at: null
-review_after: 2026-09-03
+review_after: 2026-09-04
 source_chat_id: null
 created_at: 2026-09-03T07:46:46.696716+00:00
 summary: null

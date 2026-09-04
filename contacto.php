@@ -49,9 +49,9 @@ require_once __DIR__ . '/includes/header.php';
 
                 <a href="https://mail.google.com/mail/?view=cm&fs=1&to=info@stecheng.co.mz&su=Contato%20via%20site" target="_blank">info@cmsv.co.mz</a>
             </div>
-            <div class="info-contacto-item">
+                        <div class="info-contacto-item">
                 <h3><?= htmlspecialchars(t('contacto.info.horario_titulo')) ?></h3>
-                <p><?= htmlspecialchars(t('footer.horario')) ?> <span class="badge-horario" id="badgeHorario" hidden></span></p>
+                <p><?= htmlspecialchars(t('footer.horario')) ?> <span class="badge-horario" id="badgeHorario" data-texto-aberto="<?= htmlspecialchars(t('contacto.horario.aberto_agora')) ?>" data-texto-fechado="<?= htmlspecialchars(t('contacto.horario.fechado')) ?>" hidden></span></p>
             </div>
         </div>
 
@@ -131,10 +131,12 @@ require_once __DIR__ . '/includes/header.php';
                                     $diasAttr = implode(',', $diasTrat); // vazio = sem restrição (todos os dias)
                                 ?>
                                 <label class="item-servico-checkbox" data-nome="<?= mb_strtolower(htmlspecialchars($tratamento['nome'])) ?>" data-dias="<?= htmlspecialchars($diasAttr) ?>">
-                                    <input type="checkbox" name="id_tratamentos[]" value="<?= $idTrat ?>"
-                                        <?= in_array($idTrat, $tratamentosPreSelecionados, true) ? 'checked' : '' ?>>
-                                    <span class="nome-servico">
+                                    <span class="item-servico-linha-principal">
+                                        <input type="checkbox" name="id_tratamentos[]" value="<?= $idTrat ?>"
+                                            <?= in_array($idTrat, $tratamentosPreSelecionados, true) ? 'checked' : '' ?>>
                                         <span class="nome-servico-texto"><?= htmlspecialchars($tratamento['nome']) ?></span>
+                                    </span>
+                                    <span class="item-servico-linha-secundaria">
                                         <span class="dias-disponiveis-servico">
                                             <?php if (!empty($diasTrat)): ?>
                                                 <?= sprintf(
@@ -148,8 +150,8 @@ require_once __DIR__ . '/includes/header.php';
                                                 <?= htmlspecialchars(t('contacto.form.disponivel_todos_dias')) ?>
                                             <?php endif; ?>
                                         </span>
+                                        <span class="preco-servico"><?= number_format((float)$tratamento['preco'], 2, ',', '.') ?> MT</span>
                                     </span>
-                                    <span class="preco-servico"><?= number_format((float)$tratamento['preco'], 2, ',', '.') ?> MT</span>
                                 </label>
                             <?php endforeach; ?>
                         </div>
@@ -233,7 +235,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         chipsContainer.innerHTML = '';
         marcados.forEach((cb) => {
-            const nome = cb.closest('.item-servico-checkbox').querySelector('.nome-servico').textContent.trim();
+            const nome = cb.closest('.item-servico-checkbox').querySelector('.nome-servico-texto').textContent.trim();
 
             const chip = document.createElement('span');
             chip.className = 'chip-servico';

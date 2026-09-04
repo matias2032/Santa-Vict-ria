@@ -214,7 +214,10 @@ const seletoresRevelar = '.secao-cabecalho, .cartao-servico, .cartao-destaque, .
         const horaAtual = agora.getHours() + agora.getMinutes() / 60;
         const aberto = horaAtual >= 7 && horaAtual < 22; // 07h00 às 22h00, todos os dias
 
-        badgeHorario.textContent = aberto ? 'Aberto agora' : 'Fechado';
+        const textoAberto = badgeHorario.dataset.textoAberto || 'Open now';
+        const textoFechado = badgeHorario.dataset.textoFechado || 'Closed';
+
+        badgeHorario.textContent = aberto ? textoAberto : textoFechado;
         badgeHorario.classList.add(aberto ? 'aberto' : 'fechado');
         badgeHorario.hidden = false;
     }

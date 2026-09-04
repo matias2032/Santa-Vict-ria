@@ -6,7 +6,7 @@ tags:
 - git
 - pattern
 created: 2026-09-03
-updated: 2026-09-03
+updated: 2026-09-04
 filenames:
 - .refact/buddy/memory_ops.jsonl
 - .refact/buddy/runtime_queue.jsonl
@@ -15,7 +15,7 @@ kind: pattern
 status: proposed
 superseded_by: null
 deprecated_at: null
-review_after: 2026-09-03
+review_after: 2026-09-04
 source_chat_id: null
 created_at: 2026-09-03T09:18:15.069526100+00:00
 summary: null

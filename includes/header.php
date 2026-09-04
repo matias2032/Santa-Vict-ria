@@ -46,12 +46,12 @@ function urlComIdioma(string $idiomaAlvo, string $paginaAtual): string {
 })();
 </script>
 
-<title><?= isset($tituloPagina) ? htmlspecialchars($tituloPagina) . ' | Centro Médico Santa Victória' : 'Centro Médico Santa Victória' ?></title>
+<title><?= isset($tituloPagina) ? htmlspecialchars($tituloPagina) . ' (Centro Médico Santa Victória)' : 'Centro Médico Santa Victória' ?></title>
 <meta name="description" content="Centro Médico Santa Victória - cuidados de saúde de confiança, com uma equipa dedicada ao seu bem-estar.">
 <link rel="icon" href="assets/images/logo.png" type="image/png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,400;0,700;1,400&family=Nunito+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>

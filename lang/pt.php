@@ -200,6 +200,9 @@ return [
     'galeria.vazio'              => 'Ainda não há fotografias na galeria. Adicione ficheiros em %s.',
     'galeria.filtro.todas'       => 'Todas',
     'galeria.categoria_geral'    => 'Geral',
+    'galeria.categoria.actividades'  => 'Actividades',
+    'galeria.categoria.instalacoes'  => 'Instalações',
+    'galeria.categoria.laboratorio'  => 'Laboratório',
     'galeria.sem_fotos'          => 'Não há fotografias nesta categoria.',
     'galeria.foto_alt'           => 'Fotografia do Centro Médico Santa Victória',
     'galeria.lightbox.fechar'    => 'Fechar',
@@ -220,6 +223,8 @@ return [
     'contacto.info.telefone_titulo' => 'Telefone',
     'contacto.info.email_titulo'    => 'E-mail',
     'contacto.info.horario_titulo'  => 'Horário',
+    'contacto.horario.aberto_agora' => 'Aberto agora',
+    'contacto.horario.fechado'      => 'Fechado',
 
     // Contacto — Mensagens de estado
     'contacto.mensagem.sucesso' => 'O seu pedido de agendamento foi recebido. Entraremos em contacto para confirmar.',

@@ -200,6 +200,9 @@ return [
     'galeria.vazio'              => 'There are no gallery photos yet. Add files in %s.',
     'galeria.filtro.todas'       => 'All',
     'galeria.categoria_geral'    => 'General',
+    'galeria.categoria.actividades'  => 'Activities',
+    'galeria.categoria.instalacoes'  => 'Facilities',
+    'galeria.categoria.laboratorio'  => 'Laboratory',
     'galeria.sem_fotos'          => 'No photos found in this category.',
     'galeria.foto_alt'           => 'Photo of Centro Médico Santa Victória',
     'galeria.lightbox.fechar'    => 'Close',
@@ -220,6 +223,8 @@ return [
     'contacto.info.telefone_titulo' => 'Phone',
     'contacto.info.email_titulo'    => 'Email',
     'contacto.info.horario_titulo'  => 'Hours',
+    'contacto.horario.aberto_agora' => 'Open now',
+    'contacto.horario.fechado'      => 'Closed',
 
     // Contact — Status messages
     'contacto.mensagem.sucesso' => 'Your appointment request has been received. We will contact you to confirm.',

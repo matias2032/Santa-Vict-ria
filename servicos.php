@@ -7,15 +7,6 @@ $tituloPagina = t('servicos.titulo_pagina');
 $tratamentos = buscarTratamentosTraduzidos($pdo, $idioma);
 $diasPorTratamento = buscarDiasPorTratamentos($pdo, array_column($tratamentos, 'id_tratamento'));
 
-// Dias efetivamente usados por algum tratamento, para só mostrar botões de filtro relevantes.
-$diasUsados = [];
-foreach ($diasPorTratamento as $dias) {
-    foreach ($dias as $d) {
-        $diasUsados[$d] = true;
-    }
-}
-ksort($diasUsados);
-
 // Serviço em destaque: usa o primeiro da lista para dar visibilidade extra a um tratamento.
 // Podes trocar por outra lógica (ex: um id fixo) assim que tiveres um serviço "estrela".
 $servicoDestaque = !empty($tratamentos) ? $tratamentos[0] : null;
@@ -65,16 +56,14 @@ require_once __DIR__ . '/includes/header.php';
                 <input type="text" id="pesquisaServicos" placeholder="<?= htmlspecialchars(t('servicos.pesquisa.placeholder')) ?>" aria-label="<?= htmlspecialchars(t('servicos.pesquisa.aria')) ?>">
             </div>
 
-            <?php if (!empty($diasUsados)): ?>
-                <div class="filtros-galeria" id="filtrosDiasServicos">
-                    <button type="button" class="filtro-galeria ativo" data-dia="todos"><?= htmlspecialchars(t('servicos.filtro_dias.todos')) ?></button>
-                    <?php foreach (array_keys($diasUsados) as $dia): ?>
-                        <button type="button" class="filtro-galeria" data-dia="<?= $dia ?>">
-                            <?= htmlspecialchars(t(DIAS_SEMANA_ABREV_CHAVES[$dia])) ?>
-                        </button>
-                    <?php endforeach; ?>
-                </div>
-            <?php endif; ?>
+            <div class="filtros-galeria" id="filtrosDiasServicos">
+                <button type="button" class="filtro-galeria ativo" data-dia="todos"><?= htmlspecialchars(t('servicos.filtro_dias.todos')) ?></button>
+                <?php foreach (DIAS_SEMANA_ABREV_CHAVES as $dia => $chave): ?>
+                    <button type="button" class="filtro-galeria" data-dia="<?= $dia ?>">
+                        <?= htmlspecialchars(t($chave)) ?>
+                    </button>
+                <?php endforeach; ?>
+            </div>
 
             <div class="grelha-servicos" id="grelhaServicos">
                 <?php foreach ($tratamentos as $tratamento): ?>
