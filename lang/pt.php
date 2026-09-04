@@ -52,7 +52,7 @@ return [
     'index.servicos.eyebrow' => 'O que oferecemos',
     'index.servicos.titulo'  => 'Os nossos serviços',
     'index.servicos.texto'   => 'Um conjunto de especialidades pensado para cuidar de si em cada fase da vida.',
-    'index.servicos.desde'   => 'Desde',
+    'index.servicos.desde'   => 'Á partir de',
     'index.servicos.botao'   => 'Ver todos os serviços',
 
     // Serviços de reserva (mostrados só se a BD estiver vazia/indisponível)
