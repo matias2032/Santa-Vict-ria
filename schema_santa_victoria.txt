@@ -1,0 +1,238 @@
+CREATE DATABASE IF NOT EXISTS `santa_victoria` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+USE `santa_victoria`;
+
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+START TRANSACTION;
+SET time_zone = "+00:00";
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8mb4 */;
+
+-- --------------------------------------------------------
+-- 1. ESTRUTURA E DADOS: tratamentos (Tabela Pai Principal)
+-- --------------------------------------------------------
+
+CREATE TABLE `tratamentos` (
+  `id_tratamento` int(11) NOT NULL,
+  `preco` decimal(10,2) NOT NULL,
+  `ativo` tinyint(1) DEFAULT 1,
+  `criado_em` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+INSERT INTO `tratamentos` (`id_tratamento`, `preco`, `ativo`, `criado_em`) VALUES
+(1, 2000.00, 1, '2026-09-02 08:54:52'),
+(2, 3500.00, 1, '2026-09-02 08:54:52'),
+(3, 1500.00, 1, '2026-09-02 08:54:52'),
+(4, 500.00, 1, '2026-09-02 13:04:33');
+
+-- --------------------------------------------------------
+-- 2. ESTRUTURA E DADOS: agendamentos (Depende de tratamentos)
+-- --------------------------------------------------------
+
+CREATE TABLE `agendamentos` (
+  `id_agendamento` int(11) NOT NULL,
+  `id_tratamento` int(11) DEFAULT NULL,
+  `nome_cliente` varchar(100) NOT NULL,
+  `email_cliente` varchar(150) NOT NULL,
+  `telefone_cliente` varchar(20) DEFAULT NULL,
+  `data_preferencial` date DEFAULT NULL,
+  `mensagem` text DEFAULT NULL,
+  `status_agendamento` varchar(20) DEFAULT 'pendente',
+  `criado_em` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+INSERT INTO `agendamentos` (`id_agendamento`, `id_tratamento`, `nome_cliente`, `email_cliente`, `telefone_cliente`, `data_preferencial`, `mensagem`, `status_agendamento`, `criado_em`) VALUES
+(1, 1, 'Matias Alberto', 'matiasmatavel521@gmail.com', '876821594', '2026-09-10', 'parti o pé', 'pendente', '2026-09-02 11:09:45'),
+(2, 2, 'Matias Alberto', 'hexodier1232@gmail.com', '876821594', '2026-10-28', 'Tenho um dente furado', 'pendente', '2026-09-02 11:38:36'),
+(3, 1, 'Matias Alberto', 'matiasmatavel1232@gmail.com', '876821594', '2026-09-20', 'Estou com dores nas costas', 'pendente', '2026-09-02 12:07:13'),
+(4, 1, 'Matias Alberto', 'matiasmatavel1232@gmail.com', '876821594', '2026-09-20', 'Estou com dores nas costas', 'pendente', '2026-09-02 12:07:15'),
+(5, 3, 'Matias Alberto', 'matiasmatavel1232@gmail.com', '876821594', '2026-10-01', 'Quero fazer uma consulta para saber acerca do alinhamento dos meus dentes', 'pendente', '2026-09-02 12:13:34'),
+(6, 1, 'Matias Alberto', 'matiasmatavel1232@gmail.com', '876821594', '2026-09-20', 'prrrrrrrr', 'pendente', '2026-09-02 12:28:30'),
+(7, 1, 'Matias Alberto Matavel', 'matiasmatavel1232@gmail.com', '876821594', '2027-02-01', 'quero fazer o meu checkup anual', 'pendente', '2026-09-02 12:30:11'),
+(8, 1, 'Matias Alberto Matavel', 'hexodier1232@gmail.com', '876821594', '2027-08-20', 'Quero fazer o meu check-up Anual, espero por uma notícia em breve', 'pendente', '2026-09-02 12:38:21'),
+(9, 3, 'Matias Matavel', 'hexodier1232@gmail.com', NULL, '2027-02-01', 'xcv', 'pendente', '2026-09-02 12:43:13'),
+(10, NULL, 'Matias Matavel', 'hexodier1232@gmail.com', '844630261', '2027-02-03', 'consulta de rotina', 'pendente', '2026-09-02 13:07:41'),
+(11, NULL, 'Matias Matavel', 'hexodier1232@gmail.com', '984894', '2027-09-09', 'peeeeeeeeerrr', 'pendente', '2026-09-02 13:12:00'),
+(12, NULL, 'Matias Matavel', 'matiasmatavel521@gmail.com', '876821594', '2026-09-20', 'Quero fazer o meu checkup anual de rotina', 'pendente', '2026-09-03 09:04:20'),
+(13, NULL, 'Matias Matavel', 'matiasmatavel521@gmail.com', '876821594', '2026-09-20', 'I want to have my routine annual check-up.', 'pendente', '2026-09-03 09:05:27'),
+(14, NULL, 'Matias Matavel', 'matiasmatavel521@gmail.com', '876821594', '2026-09-20', 'Quero fazer o meu checkup anual de rotina', 'pendente', '2026-09-03 09:06:23'),
+(15, NULL, 'Matias Alberto', 'matiasmatavel1232@gmail.com', '876821594', '2026-09-20', 'little bit', 'pendente', '2026-09-03 14:12:08'),
+(16, NULL, 'Matias Alberto', 'matiasmatavel1232@gmail.com', '876821594', '2026-09-20', 'little bit', 'pendente', '2026-09-03 14:12:09'),
+(17, NULL, 'Matias Alberto', 'matiasmatavel1232@gmail.com', '876821594', '2026-09-20', 'little bit', 'pendente', '2026-09-03 14:12:10'),
+(18, NULL, 'Matias Alberto', 'matiasmatavel1232@gmail.com', '876821594', '2026-09-20', 'little bit', 'pendente', '2026-09-03 14:12:11');
+
+-- --------------------------------------------------------
+-- 3. ESTRUTURA E DADOS: agendamento_tratamentos (Depende de agendamentos e tratamentos)
+-- --------------------------------------------------------
+
+CREATE TABLE `agendamento_tratamentos` (
+  `id_agendamento` int(11) NOT NULL,
+  `id_tratamento` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+INSERT INTO `agendamento_tratamentos` (`id_agendamento`, `id_tratamento`) VALUES
+(10, 1),
+(10, 3),
+(10, 4),
+(11, 3),
+(12, 1),
+(13, 1),
+(14, 1),
+(15, 1),
+(16, 1),
+(17, 1),
+(18, 1);
+
+-- --------------------------------------------------------
+-- 4. ESTRUTURA E DADOS: email_logs (Depende de agendamentos)
+-- --------------------------------------------------------
+
+CREATE TABLE `email_logs` (
+  `id_email_log` int(11) NOT NULL,
+  `id_agendamento` int(11) DEFAULT NULL,
+  `destinatario` varchar(150) NOT NULL,
+  `tipo_email` varchar(50) NOT NULL,
+  `assunto` varchar(200) NOT NULL,
+  `enviado_com_sucesso` tinyint(1) DEFAULT 0,
+  `mensagem_erro` text DEFAULT NULL,
+  `enviado_em` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+INSERT INTO `email_logs` (`id_email_log`, `id_agendamento`, `destinatario`, `tipo_email`, `assunto`, `enviado_com_sucesso`, `mensagem_erro`, `enviado_em`) VALUES
+(1, 1, 'matiasmatavel521@gmail.com', 'confirmacao_cliente', 'Recebemos o seu pedido de agendamento - Centro Médico Santa Victória', 1, NULL, '2026-09-02 11:09:46'),
+(2, 1, 'geral@santavictoria.co.mz', 'notificacao_clinica', 'Novo pedido de agendamento recebido', 1, NULL, '2026-09-02 11:09:47'),
+(3, 2, 'hexodier1232@gmail.com', 'confirmacao_cliente', 'Recebemos o seu pedido de agendamento - Centro Médico Santa Victória', 1, NULL, '2026-09-02 11:38:37'),
+(4, 2, 'geral@santavictoria.co.mz', 'notificacao_clinica', 'Novo pedido de agendamento recebido', 1, NULL, '2026-09-02 11:38:38'),
+(5, 3, 'matiasmatavel1232@gmail.com', 'confirmacao_cliente', 'Recebemos o seu pedido de agendamento - Centro Médico Santa Victória', 1, NULL, '2026-09-02 12:07:15'),
+(6, 4, 'matiasmatavel1232@gmail.com', 'confirmacao_cliente', 'Recebemos o seu pedido de agendamento - Centro Médico Santa Victória', 1, NULL, '2026-09-02 12:07:16'),
+(7, 3, 'geral@santavictoria.co.mz', 'notificacao_clinica', 'Novo pedido de agendamento recebido', 1, NULL, '2026-09-02 12:07:16'),
+(8, 4, 'geral@santavictoria.co.mz', 'notificacao_clinica', 'Novo pedido de agendamento recebido', 1, NULL, '2026-09-02 12:07:17'),
+(9, 5, 'matiasmatavel1232@gmail.com', 'confirmacao_cliente', 'Recebemos o seu pedido de agendamento - Centro Médico Santa Victória', 1, NULL, '2026-09-02 12:13:36'),
+(10, 5, 'geral@santavictoria.co.mz', 'notificacao_clinica', 'Novo pedido de agendamento recebido', 1, NULL, '2026-09-02 12:13:37'),
+(11, 6, 'matiasmatavel1232@gmail.com', 'confirmacao_cliente', 'Recebemos o seu pedido de agendamento - Centro Médico Santa Victória', 1, NULL, '2026-09-02 12:28:32'),
+(12, 6, 'hexodier1232@gmail.com', 'notificacao_clinica', 'Novo pedido de agendamento recebido', 1, NULL, '2026-09-02 12:28:33'),
+(13, 7, 'matiasmatavel1232@gmail.com', 'confirmacao_cliente', 'Recebemos o seu pedido de agendamento - Centro Médico Santa Victória', 1, NULL, '2026-09-02 12:30:12'),
+(14, 7, 'matias@stecheng.co.mz', 'notificacao_clinica', 'Novo pedido de agendamento recebido', 1, NULL, '2026-09-02 12:30:13'),
+(15, 8, 'hexodier1232@gmail.com', 'confirmacao_cliente', 'Recebemos o seu pedido de agendamento - Centro Médico Santa Victória', 1, NULL, '2026-09-02 12:38:22'),
+(16, 8, 'matias@stecheng.co.mz', 'notificacao_clinica', 'Novo pedido de agendamento recebido', 1, NULL, '2026-09-02 12:38:23'),
+(17, 9, 'hexodier1232@gmail.com', 'confirmacao_cliente', 'Recebemos o seu pedido de agendamento - Centro Médico Santa Victória', 1, NULL, '2026-09-02 12:43:14'),
+(18, 9, 'matias@stecheng.co.mz', 'notificacao_clinica', 'Novo pedido de agendamento recebido', 1, NULL, '2026-09-02 12:43:15'),
+(19, 10, 'hexodier1232@gmail.com', 'confirmacao_cliente', 'Recebemos o seu pedido de agendamento - Centro Médico Santa Victória', 1, NULL, '2026-09-02 13:07:42'),
+(20, 10, 'matias@stecheng.co.mz', 'notificacao_clinica', 'Novo pedido de agendamento recebido', 1, NULL, '2026-09-02 13:07:44'),
+(21, 11, 'hexodier1232@gmail.com', 'confirmacao_cliente', 'Recebemos o seu pedido de agendamento - Centro Médico Santa Victória', 1, NULL, '2026-09-02 13:12:01'),
+(22, 11, 'matias@stecheng.co.mz', 'notificacao_clinica', 'Novo pedido de agendamento recebido', 1, NULL, '2026-09-02 13:12:03'),
+(23, 12, 'matiasmatavel521@gmail.com', 'confirmacao_cliente', 'Recebemos o seu pedido de agendamento - Centro Médico Santa Victória', 1, NULL, '2026-09-03 09:04:22'),
+(24, 12, 'matias@stecheng.co.mz', 'notificacao_clinica', 'Novo pedido de agendamento recebido', 1, NULL, '2026-09-03 09:04:23'),
+(25, 13, 'matiasmatavel521@gmail.com', 'confirmacao_cliente', 'We received your appointment request - Centro Médico Santa Victória', 1, NULL, '2026-09-03 09:05:28'),
+(26, 13, 'matias@stecheng.co.mz', 'notificacao_clinica', 'Novo pedido de agendamento recebido', 1, NULL, '2026-09-03 09:05:29'),
+(27, 14, 'matiasmatavel521@gmail.com', 'confirmacao_cliente', 'We received your appointment request - Centro Médico Santa Victória', 1, NULL, '2026-09-03 09:06:24'),
+(28, 14, 'matias@stecheng.co.mz', 'notificacao_clinica', 'Novo pedido de agendamento recebido', 1, NULL, '2026-09-03 09:06:25'),
+(29, 15, 'matiasmatavel1232@gmail.com', 'confirmacao_cliente', 'We received your appointment request - Centro Médico Santa Victória', 1, NULL, '2026-09-03 14:12:09'),
+(30, 16, 'matiasmatavel1232@gmail.com', 'confirmacao_cliente', 'We received your appointment request - Centro Médico Santa Victória', 1, NULL, '2026-09-03 14:12:10'),
+(31, 15, 'matias@stecheng.co.mz', 'notificacao_clinica', 'Novo pedido de agendamento recebido', 1, NULL, '2026-09-03 14:12:10'),
+(32, 16, 'matias@stecheng.co.mz', 'notificacao_clinica', 'Novo pedido de agendamento recebido', 1, NULL, '2026-09-03 14:12:11'),
+(33, 17, 'matiasmatavel1232@gmail.com', 'confirmacao_cliente', 'We received your appointment request - Centro Médico Santa Victória', 1, NULL, '2026-09-03 14:12:12'),
+(34, 18, 'matiasmatavel1232@gmail.com', 'confirmacao_cliente', 'We received your appointment request - Centro Médico Santa Victória', 1, NULL, '2026-09-03 14:12:12'),
+(35, 17, 'matias@stecheng.co.mz', 'notificacao_clinica', 'Novo pedido de agendamento recebido', 1, NULL, '2026-09-03 14:12:13'),
+(36, 18, 'matias@stecheng.co.mz', 'notificacao_clinica', 'Novo pedido de agendamento recebido', 1, NULL, '2026-09-03 14:12:13');
+
+-- --------------------------------------------------------
+-- 5. ESTRUTURA E DADOS: tratamentos_traducoes (Depende de tratamentos)
+-- --------------------------------------------------------
+
+CREATE TABLE `tratamentos_traducoes` (
+  `id_tratamento` int(11) NOT NULL,
+  `idioma` varchar(5) NOT NULL,
+  `nome` varchar(100) NOT NULL,
+  `descricao` text DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+INSERT INTO `tratamentos_traducoes` (`id_tratamento`, `idioma`, `nome`, `descricao`) VALUES
+(1, 'en', 'General Consultation', 'General medical assessment and initial diagnosis'),
+(1, 'pt', 'Consulta Geral', 'Atendimento médico geral e diagnóstico inicial'),
+(2, 'en', 'Dental Cleaning', 'Plaque and tartar removal (prophylaxis) procedure'),
+(2, 'pt', 'Limpeza Dental', 'Procedimento de profilaxia e remoção de tártaro'),
+(3, 'en', 'Orthodontic Assessment', 'Clinical exam for fitting a dental brace'),
+(3, 'pt', 'Avaliação Ortodôntica', 'Exame clínico para uso de aparelho dental'),
+(4, 'en', 'Gynecology Consultation', NULL),
+(4, 'pt', 'Consulta ao Ginecologista', NULL);
+
+-- --------------------------------------------------------
+-- 6. ESTRUTURA E DADOS: tratamento_dias (Depende de tratamentos)
+-- --------------------------------------------------------
+
+CREATE TABLE `tratamento_dias` (
+  `id_tratamento` int(11) NOT NULL,
+  `dia_semana` tinyint(1) NOT NULL COMMENT '1=Segunda, 2=Terça, 3=Quarta, 4=Quinta, 5=Sexta, 6=Sábado, 7=Domingo'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+INSERT INTO `tratamento_dias` (`id_tratamento`, `dia_semana`) VALUES
+(3, 1),
+(3, 3),
+(3, 5);
+
+-- --------------------------------------------------------
+-- 7. ÍNDICES DAS TABELAS
+-- --------------------------------------------------------
+
+ALTER TABLE `tratamentos`
+  ADD PRIMARY KEY (`id_tratamento`);
+
+ALTER TABLE `agendamentos`
+  ADD PRIMARY KEY (`id_agendamento`),
+  ADD KEY `id_tratamento` (`id_tratamento`);
+
+ALTER TABLE `agendamento_tratamentos`
+  ADD PRIMARY KEY (`id_agendamento`,`id_tratamento`),
+  ADD KEY `id_tratamento` (`id_tratamento`);
+
+ALTER TABLE `email_logs`
+  ADD PRIMARY KEY (`id_email_log`),
+  ADD KEY `id_agendamento` (`id_agendamento`);
+
+ALTER TABLE `tratamentos_traducoes`
+  ADD PRIMARY KEY (`id_tratamento`,`idioma`);
+
+ALTER TABLE `tratamento_dias`
+  ADD PRIMARY KEY (`id_tratamento`,`dia_semana`);
+
+-- --------------------------------------------------------
+-- 8. AUTO_INCREMENT DAS TABELAS
+-- --------------------------------------------------------
+
+ALTER TABLE `tratamentos`
+  MODIFY `id_tratamento` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+ALTER TABLE `agendamentos`
+  MODIFY `id_agendamento` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+
+ALTER TABLE `email_logs`
+  MODIFY `id_email_log` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=37;
+
+-- --------------------------------------------------------
+-- 9. CONSTRAINTS / CHAVES ESTRANGEIRAS (Definidas por último)
+-- --------------------------------------------------------
+
+ALTER TABLE `agendamentos`
+  ADD CONSTRAINT `agendamentos_ibfk_1` FOREIGN KEY (`id_tratamento`) REFERENCES `tratamentos` (`id_tratamento`) ON DELETE SET NULL;
+
+ALTER TABLE `agendamento_tratamentos`
+  ADD CONSTRAINT `agendamento_tratamentos_ibfk_1` FOREIGN KEY (`id_agendamento`) REFERENCES `agendamentos` (`id_agendamento`) ON DELETE CASCADE,
+  ADD CONSTRAINT `agendamento_tratamentos_ibfk_2` FOREIGN KEY (`id_tratamento`) REFERENCES `tratamentos` (`id_tratamento`) ON DELETE CASCADE;
+
+ALTER TABLE `email_logs`
+  ADD CONSTRAINT `email_logs_ibfk_1` FOREIGN KEY (`id_agendamento`) REFERENCES `agendamentos` (`id_agendamento`) ON DELETE CASCADE;
+
+ALTER TABLE `tratamentos_traducoes`
+  ADD CONSTRAINT `tratamentos_traducoes_ibfk_1` FOREIGN KEY (`id_tratamento`) REFERENCES `tratamentos` (`id_tratamento`) ON DELETE CASCADE;
+
+ALTER TABLE `tratamento_dias`
+  ADD CONSTRAINT `tratamento_dias_ibfk_1` FOREIGN KEY (`id_tratamento`) REFERENCES `tratamentos` (`id_tratamento`) ON DELETE CASCADE;
+
+COMMIT;
+
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
